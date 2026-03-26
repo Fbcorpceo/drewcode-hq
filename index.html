@@ -477,35 +477,77 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
       </ul>
     </div>
     <div class="form-card">
-      <div id="guestForm">
+      <form id="guestForm" action="https://formspree.io/f/xqegzdow" method="POST">
         <div class="form-grid">
-          <div class="form-group"><label>First Name</label><input type="text" placeholder="John" id="firstName"/></div>
-          <div class="form-group"><label>Last Name</label><input type="text" placeholder="Smith" id="lastName"/></div>
-          <div class="form-group"><label>Email Address</label><input type="email" placeholder="john@company.com" id="email"/></div>
-          <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="(555) 000-0000" id="phone"/></div>
-          <div class="form-group full"><label>Company / Business Name</label><input type="text" placeholder="Your Company Name" id="company"/></div>
-          <div class="form-group full"><label>What do you do?</label><input type="text" placeholder="e.g. General Contractor, 15 years in commercial construction" id="role"/></div>
-          <div class="form-group full"><label>Tell Us Your Story</label><textarea placeholder="What experience or insight would you bring to the show?" id="story"></textarea></div>
-          <div class="form-group full"><label>Topics You Can Speak To</label>
-            <select id="topic">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="First Name" placeholder="John" required/>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="Last Name" placeholder="Smith" required/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" name="_replyto" placeholder="john@company.com" required/>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" name="Phone" placeholder="(555) 000-0000"/>
+          </div>
+          <div class="form-group full">
+            <label>Company / Business Name</label>
+            <input type="text" name="Company" placeholder="Your Company Name" required/>
+          </div>
+          <div class="form-group full">
+            <label>What do you do?</label>
+            <input type="text" name="Role" placeholder="e.g. General Contractor, 15 years in commercial construction" required/>
+          </div>
+          <div class="form-group full">
+            <label>Tell Us Your Story</label>
+            <textarea name="Story" placeholder="What experience or insight would you bring to the show?" required></textarea>
+          </div>
+          <div class="form-group full">
+            <label>Topics You Can Speak To</label>
+            <select name="Topic" required>
               <option value="">Select a primary topic...</option>
-              <option>Business Growth &amp; Scaling</option><option>Project Management</option>
-              <option>Construction Technology</option><option>Finance &amp; Cash Flow</option>
-              <option>Labor &amp; HR</option><option>Marketing &amp; Sales</option>
-              <option>Leadership &amp; Culture</option><option>Residential Construction</option>
-              <option>Commercial Construction</option><option>Specialty Trade</option>
-              <option>Real Estate Development</option><option>Other</option>
+              <option>Business Growth &amp; Scaling</option>
+              <option>Project Management</option>
+              <option>Construction Technology</option>
+              <option>Finance &amp; Cash Flow</option>
+              <option>Labor &amp; HR</option>
+              <option>Marketing &amp; Sales</option>
+              <option>Leadership &amp; Culture</option>
+              <option>Residential Construction</option>
+              <option>Commercial Construction</option>
+              <option>Specialty Trade</option>
+              <option>Real Estate Development</option>
+              <option>Other</option>
             </select>
           </div>
-          <div class="form-group"><label>Preferred Format</label>
-            <select id="format"><option value="">Select...</option><option>Remote (Video Call)</option><option>In-Studio</option><option>Either works</option></select>
+          <div class="form-group">
+            <label>Preferred Format</label>
+            <select name="Format" required>
+              <option value="">Select...</option>
+              <option>Remote (Video Call)</option>
+              <option>In-Studio</option>
+              <option>Either works</option>
+            </select>
           </div>
-          <div class="form-group"><label>Availability</label><input type="text" placeholder="e.g. April, mornings" id="availability"/></div>
-          <div class="form-group full"><label>Social Media / Website (Optional)</label><input type="url" placeholder="https://yourwebsite.com" id="social"/></div>
+          <div class="form-group">
+            <label>Availability</label>
+            <input type="text" name="Availability" placeholder="e.g. April, mornings" required/>
+          </div>
+          <div class="form-group full">
+            <label>Social Media / Website (Optional)</label>
+            <input type="url" name="Social" placeholder="https://yourwebsite.com"/>
+          </div>
         </div>
-        <button class="form-submit" onclick="submitForm()">Submit My Application &rarr;</button>
-        <p class="form-note">Submissions go directly to <a href="/cdn-cgi/l/email-protection#1377617664537571707c61633d707c7e" class="__cf_email__" data-cfemail="1377617664537571707c61633d707c7e">[email&#160;protected]</a> — we review every application personally.</p>
-      </div>
+        <input type="hidden" name="_subject" value="DrewCode HQ — New Guest Application"/>
+        <input type="hidden" name="_next" value="https://drewcodehq.com"/>
+        <button type="submit" class="form-submit">Submit My Application &rarr;</button>
+        <p class="form-note">Submissions go directly to drew@fbcorp.com — we review every application personally.</p>
+      </form>
       <div class="form-success" id="formSuccess">
         <div class="success-icon">&#10003;</div>
         <h4>APPLICATION RECEIVED!</h4>
@@ -576,63 +618,7 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
   document.getElementById("next").addEventListener("click",()=>track.scrollBy({left:360,behavior:"smooth"}));
   document.getElementById("prev").addEventListener("click",()=>track.scrollBy({left:-360,behavior:"smooth"}));
 
-  async function submitForm(){
-    // Validate required fields
-    const ids=["firstName","lastName","email","company","role","story","topic","format","availability"];
-    let ok=true;
-    ids.forEach(id=>{
-      const el=document.getElementById(id);
-      if(!el||!el.value.trim()){
-        if(el){el.style.borderColor="var(--accent)";setTimeout(()=>el.style.borderColor="",2000);}
-        ok=false;
-      }
-    });
-    if(!ok){alert("Please fill in all required fields.");return;}
-
-    const btn=document.querySelector(".form-submit");
-    const originalText=btn.textContent;
-    btn.textContent="Sending...";
-    btn.disabled=true;
-
-    const formData=new FormData();
-    formData.append("First Name",    document.getElementById("firstName").value);
-    formData.append("Last Name",     document.getElementById("lastName").value);
-    formData.append("Email",         document.getElementById("email").value);
-    formData.append("Phone",         document.getElementById("phone").value||"N/A");
-    formData.append("Company",       document.getElementById("company").value);
-    formData.append("Role",          document.getElementById("role").value);
-    formData.append("Story",         document.getElementById("story").value);
-    formData.append("Topic",         document.getElementById("topic").value);
-    formData.append("Format",        document.getElementById("format").value);
-    formData.append("Availability",  document.getElementById("availability").value);
-    formData.append("Social",        document.getElementById("social").value||"N/A");
-    formData.append("_subject",      "DrewCode HQ Guest Application — "+document.getElementById("firstName").value+" "+document.getElementById("lastName").value);
-    formData.append("_replyto",      document.getElementById("email").value);
-
-    try{
-      const res=await fetch("https://formspree.io/f/xqegzdow",{
-        method:"POST",
-        body:formData,
-        headers:{"Accept":"application/json"}
-      });
-      const json=await res.json();
-      if(res.ok && json.ok){
-        document.getElementById("guestForm").style.display="none";
-        document.getElementById("formSuccess").classList.add("show");
-      } else {
-        const errMsg=json.errors?json.errors.map(e=>e.message).join(", "):"Unknown error";
-        btn.textContent=originalText;
-        btn.disabled=false;
-        alert("Submission error: "+errMsg+". Please email drew@fbcorp.com directly.");
-      }
-    } catch(e){
-      btn.textContent=originalText;
-      btn.disabled=false;
-      alert("Network error. Please email drew@fbcorp.com directly.");
-    }
-  }
-  window.submitForm = submitForm;
-  window.subscribeNewsletter = subscribeNewsletter;function submitForm(){
+  // Form handled natively by Formspree  window.subscribeNewsletter = subscribeNewsletter;function submitForm(){
     const ids=["firstName","lastName","email","company","role","story","topic","format","availability"];
     let ok=true;
     ids.forEach(id=>{
