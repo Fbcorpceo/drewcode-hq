@@ -2,6 +2,18 @@
 <html lang="en">
 <head>
 <meta name="robots" content="index, follow"/>
+<meta property="og:title" content="DrewCode HQ — The Podcast"/>
+<meta property="og:description" content="The construction industry's boldest podcast. Business | Growth | Strategy. Hosted by Andrew Robles."/>
+<meta property="og:image" content="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/DrewCodeHQ_16x9.png"/>
+<meta property="og:image:width" content="1280"/>
+<meta property="og:image:height" content="720"/>
+<meta property="og:url" content="https://drewcodehq.com"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="DrewCode HQ"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="DrewCode HQ — The Podcast"/>
+<meta name="twitter:description" content="The construction industry's boldest podcast. Business | Growth | Strategy. Hosted by Andrew Robles."/>
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/DrewCodeHQ_16x9.png"/>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>DrewCode HQ — The Podcast</title>
@@ -540,13 +552,13 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
           </div>
           <div class="form-group full">
             <label>Social Media / Website (Optional)</label>
-            <input type="url" name="Social" placeholder="https://yourwebsite.com"/>
+            <input type="text" name="Social" placeholder="https://yourwebsite.com or @yourhandle"/>
           </div>
         </div>
         <input type="hidden" name="_subject" value="DrewCode HQ — New Guest Application"/>
         <input type="hidden" name="_next" value="https://drewcodehq.com"/>
         <button type="submit" class="form-submit">Submit My Application &rarr;</button>
-        <p class="form-note">Submissions go directly to drew@fbcorp.com — we review every application personally.</p>
+        <p class="form-note">Submissions go directly to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a2c6d0c7d5e2c4c0c1cdd0d28cc1cdcf">[email&#160;protected]</a> — we review every application personally.</p>
       </form>
       <div class="form-success" id="formSuccess">
         <div class="success-icon">&#10003;</div>
@@ -613,7 +625,7 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const track = document.getElementById("carousel");
   document.getElementById("next").addEventListener("click",()=>track.scrollBy({left:360,behavior:"smooth"}));
   document.getElementById("prev").addEventListener("click",()=>track.scrollBy({left:-360,behavior:"smooth"}));
@@ -629,8 +641,4 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
     // Build mailto with form data
     const name = document.getElementById("firstName").value + " " + document.getElementById("lastName").value;
     const emailVal = document.getElementById("email").value;
-    const co = document.getElementById("company").value;
-    const role = document.getElementById("role").value;
-    const story = document.getElementById("story").value;
-    const topic = document.getElementById("topic").value;
-    const fmt = document.getElementById("fo
+    const co = document.getElementById("compan
