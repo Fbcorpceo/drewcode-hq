@@ -38,13 +38,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);display:
 .nav-links a:hover{opacity:1;}
 .nav-cta{background:var(--accent);color:var(--white);padding:10px 22px;border-radius:100px;font-size:.82rem;font-weight:500;transition:transform .2s;}
 .nav-cta:hover{transform:scale(1.04);opacity:1!important;}
-.hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:calc(var(--nav-h)+60px) 48px 80px 80px;overflow:hidden;}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:calc(var(--nav-h)+60px) 48px 80px;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 60% 70% at 70% 50%,rgba(232,70,10,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 50% at 20% 80%,rgba(240,180,41,.08) 0%,transparent 60%);}
-.hero-content{position:relative;z-index:1;max-width:780px;}
+.hero-content{position:relative;z-index:1;max-width:780px;margin-left:clamp(20px,5vw,80px);}
 .hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(232,70,10,.15);border:1px solid rgba(232,70,10,.3);color:var(--accent);padding:6px 16px;border-radius:100px;font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:28px;}
 .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.4);}}
-.hero h1{font-family:"Bebas Neue",sans-serif;font-size:clamp(3rem,6.5vw,7rem);line-height:.95;letter-spacing:.02em;}
+.hero h1{font-family:"Bebas Neue",sans-serif;font-size:clamp(2.8rem,8vw,7rem);line-height:.95;letter-spacing:.02em;}
 .hero h1 em{color:var(--accent);font-style:normal;}
 .hero-sub{margin-top:24px;font-size:1.15rem;font-weight:300;color:rgba(245,244,240,.65);max-width:520px;line-height:1.7;}
 .hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:44px;}
@@ -180,7 +180,7 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
   .request-layout{grid-template-columns:1fr;gap:40px;}
   .footer-top{grid-template-columns:1fr 1fr;gap:32px;}
   .newsletter-bar{padding:40px 24px;}
-  .hero{padding:calc(var(--nav-h)+40px) 24px 60px 24px;}
+  .hero{padding:calc(var(--nav-h)+40px) 20px 60px 20px;} .hero-content{margin-left:0;}
   .form-grid{grid-template-columns:1fr;}
 }
 @media(max-width:600px){
@@ -431,10 +431,10 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
       <div class="partner-type">Streaming &amp; Live Events</div>
     </a>
 
-    <a href="/cdn-cgi/l/email-protection#93f7e1f6e4d3f5f1f0fce1e3bdf0fcfe" class="partner-card" style="border-style:dashed;border-color:rgba(232,70,10,.3);background:rgba(232,70,10,.03);">
+    <a href="javascript:void(0)" onclick="sendEmail('Partnership Inquiry')" class="partner-card" style="border-style:dashed;border-color:rgba(232,70,10,.3);background:rgba(232,70,10,.03);">
       <div class="partner-logo" style="border-color:rgba(232,70,10,.3);color:rgba(232,70,10,.5);">?</div>
       <div class="partner-name" style="color:var(--muted);">Your Brand Here</div>
-      <div class="partner-type" style="color:var(--accent);">Become a Partner &rarr;</div>
+      <div class="partner-type" style="color:var(--accent);cursor:pointer;" onclick="sendEmail('Partnership Inquiry')">Become a Partner &rarr;</div>
     </a>
 
   </div>
@@ -453,7 +453,7 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
       <div class="tier-name">Crew Sponsor</div>
       <div class="tier-price">$1,500 <span>/ episode</span></div>
       <ul class="tier-features"><li>30-second mid-roll ad read</li><li>Logo in episode show notes</li><li>Social media mention</li><li>Link in YouTube description</li><li>1-episode commitment</li></ul>
-      <a href="/cdn-cgi/l/email-protection#6004120517200602030f12104e030f0d5f1315020a0503145d33100f0e130f12130809104082e0f440231205174033100f0e130f12" class="btn-ghost" style="display:block;text-align:center;padding:13px;border-radius:100px;font-size:.88rem;">Get Started</a>
+      <a href="javascript:void(0)" onclick="sendEmail('Sponsorship — Crew Sponsor')" class="btn-ghost" style="display:block;text-align:center;padding:13px;border-radius:100px;font-size:.88rem;">Get Started</a>
     </div>
     <div class="sponsor-tier featured">
       <div class="tier-badge">Most Popular</div>
@@ -461,19 +461,19 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
       <div class="tier-name">Foreman Sponsor</div>
       <div class="tier-price">$4,800 <span>/ month</span></div>
       <ul class="tier-features"><li>60-second pre-roll + mid-roll</li><li>Dedicated sponsor segment</li><li>Website featured placement</li><li>4 episodes per month</li><li>Social media integration</li><li>Email newsletter feature</li></ul>
-      <a href="/cdn-cgi/l/email-protection#dbbfa9beac9bbdb9b8b4a9abf5b8b4b6e4a8aeb9b1beb8afe688abb4b5a8b4a9a8b3b2abfb395b4ffb9db4a9beb6bab5fb88abb4b5a8b4a9" class="btn-primary" style="display:block;text-align:center;padding:13px;border-radius:100px;font-size:.88rem;">Become Foreman</a>
+      <a href="javascript:void(0)" onclick="sendEmail('Sponsorship — Foreman Sponsor')" class="btn-primary" style="display:block;text-align:center;padding:13px;border-radius:100px;font-size:.88rem;">Become Foreman</a>
     </div>
     <div class="sponsor-tier">
       <div class="tier-icon">🏢</div>
       <div class="tier-name">General Contractor</div>
       <div class="tier-price">Custom <span>pricing</span></div>
       <ul class="tier-features"><li>Full show presenting sponsorship</li><li>Co-produced branded content</li><li>Exclusive category rights</li><li>Guest appearance opportunity</li><li>Cross-platform content rights</li><li>Quarterly strategy calls</li></ul>
-      <a href="/cdn-cgi/l/email-protection#99fdebfceed9fffbfaf6ebe9b7faf6f4a6eaecfbf3fcfaeda4cae9f6f7eaf6ebeaf1f0e9b97b190db9defcf7fcebf8f5b9daf6f7edebf8faedf6eb" class="btn-ghost" style="display:block;text-align:center;padding:13px;border-radius:100px;font-size:.88rem;">Let's Talk</a>
+      <a href="javascript:void(0)" onclick="sendEmail('Sponsorship — General Contractor')" class="btn-ghost" style="display:block;text-align:center;padding:13px;border-radius:100px;font-size:.88rem;">Let's Talk</a>
     </div>
   </div>
   <div class="sponsor-cta-box">
     <div><h3>READY TO REACH 85K+ BUILDERS?</h3><p>Our audience includes general contractors, subcontractors, construction company owners, project managers, and real estate developers actively making purchasing decisions.</p></div>
-    <a href="/cdn-cgi/l/email-protection#81e5f3e4f6c1e7e3e2eef3f1afe2eeecbef2f4e3ebe4e2f5bccce4e5e8e0a1cae8f5a1d3e4f0f4e4f2f5" class="btn-primary" style="white-space:nowrap;">Download Media Kit &rarr;</a>
+    <a href="javascript:void(0)" onclick="sendEmail('Media Kit Request')" class="btn-primary" style="white-space:nowrap;">Download Media Kit &rarr;</a>
   </div>
 </section>
 <div class="divider"></div>
@@ -563,7 +563,7 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
         <input type="hidden" name="_subject" value="DrewCode HQ — New Guest Application"/>
         <input type="hidden" name="_next" value="https://drewcodehq.com"/>
         <button type="submit" class="form-submit">Submit My Application &rarr;</button>
-        <p class="form-note">Submissions go directly to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dcb8aeb9ab9cbabebfb3aeacf2bfb3b1">[email&#160;protected]</a> — we review every application personally.</p>
+        <p class="form-note">Submissions go directly to drew&#64;fbcorp.com — we review every application personally.</p>
       </form>
       <div class="form-success" id="formSuccess">
         <div class="success-icon">&#10003;</div>
@@ -610,15 +610,15 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
       <ul>
         <li><a href="#sponsorship">Sponsorships</a></li>
         <li><a href="#partners">Show Partners</a></li>
-        <li><a href="/cdn-cgi/l/email-protection#89edfbecfec9efebeae6fbf9a7eae6e4">Media Kit</a></li>
-        <li><a href="/cdn-cgi/l/email-protection#8beff9eefccbede9e8e4f9fba5e8e4e6">Advertise With Us</a></li>
+        <li><a href="javascript:void(0)" onclick="sendEmail('Media Kit Request')" >Media Kit</a></li>
+        <li><a href="javascript:void(0)" onclick="sendEmail('Advertise With Us')" >Advertise With Us</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h5>Company</h5>
       <ul>
         <li><a href="https://fbcorp.com" target="_blank">Foundational Builders Corp.</a></li>
-        <li><a href="/cdn-cgi/l/email-protection#a5c1d7c0d2e5c3c7c6cad7d58bc6cac8">Contact Drew</a></li>
+        <li><a href="javascript:void(0)" onclick="sendEmail('General Inquiry')" >Contact Drew</a></li>
         <li><a href="#">Privacy Policy</a></li>
         <li><a href="#">Terms of Use</a></li>
       </ul>
@@ -630,12 +630,19 @@ footer{background:var(--black);padding:60px 48px 32px;border-top:1px solid var(-
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  function handleNewsletter(e){
+<script>
+  
+  function sendEmail(subject) {
+    var parts=["d","r","e","w","@","f","b","c","o","r","p",".","c","o","m"];
+    var e=parts.join("");
+    var mt=["m","a","i","l","t","o",":"].join("");
+    window.location.href=mt+e+"?subject="+encodeURIComponent(subject);
+  }
+function handleNewsletter(e){
     e.preventDefault();
     const el=document.getElementById("nlEmail");
     if(!el.value||!el.value.includes("@")){el.style.borderColor="var(--accent)";setTimeout(()=>el.style.borderColor="",2000);return;}
-    window.open("mailto:drew@fbcorp.com?subject=Newsletter%20Signup&body=Please%20add%20me%20to%20the%20DrewCode%20HQ%20newsletter:%20"+encodeURIComponent(el.value));
+    var e=["d","r","e","w","@","f","b","c","o","r","p",".","c","o","m"].join(""); window.location.href="mailto:"+e+"?subject=Newsletter%20Signup&body=Please%20add%20me%20to%20the%20DrewCode%20HQ%20newsletter:%20"+encodeURIComponent(el.value);
     el.value="";el.placeholder="✓ You're subscribed!";
   }
 
