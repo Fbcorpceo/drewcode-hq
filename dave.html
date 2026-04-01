@@ -345,8 +345,25 @@
 
     function App(){
       const [unlocked,setUnlocked]=useState(false);
-      if(!unlocked) return <PasswordGate onUnlock={()=>setUnlocked(true)}/>;
       const [cur,setCur]=useState(0);
+      if(!unlocked) return <PasswordGate onUnlock={()=>setUnlocked(true)}/>;
+      const slide=slides[cur];
+      return (
+        <div className="deck">
+          <div className="nav">
+            {slides.map((s,i)=>(
+              <button key={s.id} className={`nav-btn${i===cur?" active":""}`} onClick={()=>setCur(i)}>{s.id}. {s.label}</button>
+            ))}
+          </div>
+          <div className="slide">{slide.render()}</div>
+          <div className="footer">
+            <button className="foot-btn" onClick={()=>setCur(Math.max(0,cur-1))} disabled={cur===0}>← Prev</button>
+            <span style={{fontSize:11,color:"rgba(255,255,255,0.25)",letterSpacing:1}}>{cur+1} / {slides.length}</span>
+            <button className="foot-btn" onClick={()=>setCur(Math.min(slides.length-1,cur+1))} disabled={cur===slides.length-1}>Next →</button>
+          </div>
+        </div>
+      );
+    }      const [cur,setCur]=useState(0);
       const slide=slides[cur];
       return (
         <div className="deck">
