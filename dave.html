@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DrewCodeHQ — Investor Deck</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: #080C12; min-height: 100vh; font-family: 'Inter', system-ui, sans-serif; }
+    .deck { background: #080C12; min-height: 100vh; display: flex; flex-direction: column; }
+    .nav { display: flex; gap: 2px; padding: 14px 24px; background: rgba(8,12,18,0.97); border-bottom: 0.5px solid rgba(255,255,255,0.07); flex-wrap: wrap; position: sticky; top: 0; z-index: 10; }
+    .nav-btn { padding: 6px 14px; font-size: 11px; border: none; border-radius: 6px; cursor: pointer; font-family: inherit; font-weight: 500; letter-spacing: 0.3px; transition: all 0.2s; background: transparent; color: rgba(255,255,255,0.35); }
+    .nav-btn:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
+    .nav-btn.active { background: rgba(212,168,67,0.15); color: #D4A843; }
+    .slide { flex: 1; padding: 40px 48px; min-height: 560px; display: flex; flex-direction: column; justify-content: center; }
+    .footer { display: flex; justify-content: space-between; align-items: center; padding: 14px 48px; border-top: 0.5px solid rgba(255,255,255,0.07); background: rgba(8,12,18,0.97); }
+    .foot-btn { padding: 8px 22px; background: transparent; border: 0.5px solid rgba(255,255,255,0.12); border-radius: 8px; color: rgba(255,255,255,0.4); cursor: pointer; font-size: 12px; font-family: inherit; transition: all 0.2s; }
+    .foot-btn:hover:not(:disabled) { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.75); }
+    .foot-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+    .card { background: rgba(255,255,255,0.035); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px 24px; transition: border-color 0.2s; }
+    .card:hover { border-color: rgba(255,255,255,0.14); }
+    .tag { font-size: 11px; padding: 4px 11px; border: 0.5px solid rgba(255,255,255,0.1); border-radius: 20px; color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.03); }
+    .award-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; background: rgba(212,168,67,0.05); border: 0.5px solid rgba(212,168,67,0.15); border-radius: 10px; }
+    .check-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid rgba(255,255,255,0.06); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { padding: 10px 14px; background: rgba(0,0,0,0.3); color: rgba(212,168,67,0.8); font-weight: 500; text-align: left; border-bottom: 0.5px solid rgba(255,255,255,0.08); letter-spacing: 0.8px; font-size: 10.5px; text-transform: uppercase; }
+    td { padding: 12px 14px; border-bottom: 0.5px solid rgba(255,255,255,0.05); font-size: 13px; color: #F5F7FA; }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+    .metric { background: rgba(255,255,255,0.03); border: 0.5px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 20px 16px; text-align: center; }
+    .bar-track { width: 100%; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; margin: 10px 0 14px; }
+    @media (max-width: 640px) {
+      .slide { padding: 24px 16px; }
+      .footer { padding: 12px 16px; }
+      .nav { padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const gold = "#D4A843";
+    const textPrimary = "#F5F7FA";
+    const textMuted = "#7A8A9A";
+    const accent = "#3B9EFF";
+    const green = "#34C77B";
+    const glowGold = "0 0 24px rgba(212,168,67,0.18), 0 0 2px rgba(212,168,67,0.12)";
+    const glowBlue = "0 0 24px rgba(59,158,255,0.15)";
+    const glowGreen = "0 0 24px rgba(52,199,123,0.15)";
+
+    function SlideHeader({ label, title, center = false }) {
+      return (
+        <div style={{ textAlign: center ? "center" : "left", marginBottom: 4 }}>
+          <div style={{ fontSize: 10, color: gold, letterSpacing: 3.5, textTransform: "uppercase", fontWeight: 600, marginBottom: 10, opacity: 0.85 }}>{label}</div>
+          <div style={{ fontSize: 30, fontWeight: 700, color: textPrimary, lineHeight: 1.2, letterSpacing: "-0.5px" }}>{title}</div>
+        </div>
+      );
+    }
+
+    function Avatar({ name }) {
+      const initials = name.split(" ").map(n => n[0]).join("");
+      return (
+        <div style={{ width: 42, height: 42, borderRadius: "50%", background: "rgba(59,158,255,0.12)", border: "0.5px solid rgba(59,158,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, color: accent, flexShrink: 0, boxShadow: glowBlue }}>
+          {initials}
+        </div>
+      );
+    }
+
+    const slides = [
+      {
+        id: 1, label: "Cover",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%", textAlign: "center", gap: 28 }}>
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <div style={{ position: "absolute", inset: -60, background: "radial-gradient(circle, rgba(212,168,67,0.08) 0%, transparent 70%)", borderRadius: "50%", pointerEvents: "none" }} />
+              <div style={{ fontSize: 11, letterSpacing: 5, color: gold, fontWeight: 600, textTransform: "uppercase", opacity: 0.8, marginBottom: 16 }}>Confidential · Investment Memo</div>
+              <div style={{ fontSize: 62, fontWeight: 700, color: textPrimary, lineHeight: 1, letterSpacing: "-2px", textShadow: "0 0 60px rgba(212,168,67,0.12)" }}>DrewCodeHQ</div>
+              <div style={{ fontSize: 17, color: gold, fontWeight: 500, marginTop: 12, letterSpacing: "0.5px", opacity: 0.9 }}>Skool Community Platform</div>
+            </div>
+            <div style={{ width: 48, height: 1, background: "linear-gradient(90deg, transparent, #D4A843, transparent)", margin: "4px 0" }} />
+            <div style={{ fontSize: 15, color: textMuted, maxWidth: 420, lineHeight: 1.8 }}>
+              A $60,000 investment opportunity targeting a <span style={{ color: textPrimary, fontWeight: 500 }}>2–3× return</span> over 18 months through a high-conversion online community business.
+            </div>
+            <div style={{ marginTop: 8, padding: "12px 36px", border: "0.5px solid rgba(212,168,67,0.4)", borderRadius: 8, fontSize: 12, color: gold, letterSpacing: 2.5, textTransform: "uppercase", background: "rgba(212,168,67,0.05)", boxShadow: glowGold }}>
+              Presented to Avroham D Berenbaum
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 2, label: "The Opportunity",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 28, height: "100%", justifyContent: "center" }}>
+            <SlideHeader label="The Opportunity" title="Why Skool. Why Now." />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+              {[
+                { n: "$4.4B+", label: "Creator economy projected size by 2025", sub: "Skool is the infrastructure layer", glow: glowBlue, c: accent },
+                { n: "10,000", label: "Target paid members", sub: "14 month runway", glow: glowGold, c: gold },
+                { n: "$500K+", label: "Projected monthly revenue at scale", sub: "$6M annual run rate", glow: glowGreen, c: green },
+              ].map(c => (
+                <div key={c.n} className="card" style={{ textAlign: "center", boxShadow: c.glow }}>
+                  <div style={{ fontSize: 34, fontWeight: 700, color: c.c, letterSpacing: "-1px" }}>{c.n}</div>
+                  <div style={{ fontSize: 12.5, color: textPrimary, marginTop: 8, lineHeight: 1.6 }}>{c.label}</div>
+                  <div style={{ fontSize: 11, color: textMuted, marginTop: 4 }}>{c.sub}</div>
+                </div>
+              ))}
+            </div>
+            <div className="card">
+              <div style={{ fontSize: 11, color: textMuted, marginBottom: 10, letterSpacing: 1, textTransform: "uppercase" }}>The core thesis</div>
+              <div style={{ fontSize: 14.5, color: textPrimary, lineHeight: 1.8 }}>Skool communities with high-quality content, a proven ops team, and a premium content director convert at predictable rates. DrewCodeHQ has all three. The $60K funds the content engine and growth infrastructure to reach the paid-member inflection point.</div>
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 3, label: "Business Model",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, height: "100%", justifyContent: "center" }}>
+            <SlideHeader label="Business Model" title="How the Revenue Engine Works" />
+            <div style={{ borderRadius: 14, overflow: "hidden", border: "0.5px solid rgba(255,255,255,0.08)" }}>
+              <table>
+                <thead><tr>{["Stage","Volume","Conversion","Action"].map(h => <th key={h}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {[
+                    ["Monthly Video Views","100,000","—","3 Reels/wk + podcast repurposing"],
+                    ["Free Tier Joins","2,000 / mo","2% of views","7-Day Challenge CTA"],
+                    ["Paid Upgrades","400 / mo","20% of free","Day 3/5/7 email sequence"],
+                    ["Target Members","10,000","14 months","Sustained execution"],
+                    ["Monthly Revenue","$500K+","At 10K members","$6M annual run rate"],
+                  ].map((row, i) => (
+                    <tr key={i} style={{ background: i === 4 ? "rgba(52,199,123,0.06)" : undefined }}>
+                      {row.map((cell, j) => (
+                        <td key={j} style={{ color: j===1&&i===4 ? green : j===1 ? gold : undefined, fontWeight: i===4&&j===1 ? 700 : 400 }}>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ display: "flex", gap: 12 }}>
+              {[
+                { icon: "↑", label: "Recurring revenue", desc: "Monthly subscriptions = predictable cashflow", c: accent },
+                { icon: "∞", label: "Zero inventory", desc: "Digital product — 100% margin on new members", c: gold },
+                { icon: "⟳", label: "Compounding growth", desc: "Community value rises with every new member", c: green },
+              ].map(p => (
+                <div key={p.label} className="card" style={{ flex: 1 }}>
+                  <div style={{ fontSize: 20, color: p.c, marginBottom: 6 }}>{p.icon}</div>
+                  <div style={{ fontSize: 13, color: textPrimary, fontWeight: 500, marginBottom: 4 }}>{p.label}</div>
+                  <div style={{ fontSize: 12, color: textMuted, lineHeight: 1.6 }}>{p.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 4, label: "Content Strategy",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, height: "100%", justifyContent: "center" }}>
+            <SlideHeader label="Content Strategy" title="The Acquisition Engine" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <div className="card" style={{ boxShadow: glowGold, display: "flex", flexDirection: "column", gap: 14 }}>
+                <div style={{ fontSize: 10, color: gold, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Content Director</div>
+                <div style={{ fontSize: 24, color: textPrimary, fontWeight: 700, letterSpacing: "-0.5px" }}>Adam Cyril</div>
+                <div style={{ fontSize: 13, color: textMuted, lineHeight: 1.7 }}>Professional director handling all visual production. Cinematic quality content positioned for premium brand perception and high-intent audience targeting.</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div className="award-row">
+                    <span style={{ color: gold, fontSize: 14, marginTop: 1 }}>★</span>
+                    <span style={{ fontSize: 12, color: textPrimary, lineHeight: 1.5 }}><span style={{ color: gold, fontWeight: 600 }}>Winner</span> — Best Short Doc, Hollywood International Independent Documentary Awards <span style={{ color: textMuted }}>(Director/Editor)</span></span>
+                  </div>
+                  <div className="award-row">
+                    <span style={{ color: gold, fontSize: 14, marginTop: 1 }}>★</span>
+                    <span style={{ fontSize: 12, color: textPrimary, lineHeight: 1.5 }}><span style={{ color: gold, fontWeight: 600 }}>Winner</span> — Doc Short, International Independent Film Awards</span>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {["Brand films","Reels","Podcast video","Short-form"].map(t => <span key={t} className="tag">{t}</span>)}
+                </div>
+              </div>
+              <div className="card" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div style={{ fontSize: 10, color: gold, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Weekly Output</div>
+                {[
+                  { label: "3 Reels / week", sub: "Primary top-of-funnel driver" },
+                  { label: "Podcast repurposing", sub: "Long-form → multi-clip extraction" },
+                  { label: "7-Day challenge funnel", sub: "Free → paid conversion mechanism" },
+                  { label: "Day 3 / 5 / 7 email sequence", sub: "Automated paid upgrade path" },
+                ].map(i => (
+                  <div key={i.label} style={{ borderLeft: "2px solid rgba(212,168,67,0.4)", paddingLeft: 14 }}>
+                    <div style={{ fontSize: 13, color: textPrimary, fontWeight: 500 }}>{i.label}</div>
+                    <div style={{ fontSize: 12, color: textMuted, marginTop: 2 }}>{i.sub}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: "rgba(52,199,123,0.05)", border: "0.5px solid rgba(52,199,123,0.2)", borderRadius: 12, padding: "14px 20px", fontSize: 13, color: "rgba(52,199,123,0.9)", boxShadow: glowGreen }}>
+              <strong style={{ color: green }}>Key insight:</strong> Content quality is the primary lever for conversion rate. Professional direction de-risks the top-of-funnel — a 1% improvement in free-tier conversion adds $50K/mo at scale.
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 5, label: "The Team",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, height: "100%", justifyContent: "center" }}>
+            <SlideHeader label="The Team" title="Operators Who've Done This Before" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              {[
+                { name: "Arno Schwarz", role: "Head of Operations", desc: "Scalable systems, process architecture & execution frameworks for high-growth digital businesses." },
+                { name: "Nicholas Del Negro", role: "Head of Systems & Automations", desc: "Backend & AI agent infrastructure, automation systems, full-stack development." },
+                { name: "Sakib Huq", role: "Head of Sales Operations", desc: "Outbound systems, pipeline optimization, and scalable client acquisition frameworks." },
+                { name: "Dawson Shumway", role: "Operations Manager", desc: "Execution, client delivery, workflow coordination, and high-performance operational standards." },
+              ].map(p => (
+                <div key={p.name} className="card" style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                  <Avatar name={p.name} />
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: textPrimary }}>{p.name}</div>
+                    <div style={{ fontSize: 11, color: gold, marginBottom: 6, opacity: 0.85 }}>{p.role}</div>
+                    <div style={{ fontSize: 12, color: textMuted, lineHeight: 1.6 }}>{p.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div className="card">
+                <div style={{ fontSize: 10, color: gold, textTransform: "uppercase", letterSpacing: 2, fontWeight: 600, marginBottom: 12 }}>Core competencies</div>
+                {["Community operations at scale","Automation & AI implementation","Retention system design","Luxury brand positioning"].map(c => (
+                  <div key={c} style={{ fontSize: 12, color: textMuted, padding: "7px 0", borderBottom: "0.5px solid rgba(255,255,255,0.05)", display: "flex", gap: 8, alignItems: "center" }}>
+                    <div style={{ width: 4, height: 4, borderRadius: "50%", background: gold, opacity: 0.6, flexShrink: 0 }} />{c}
+                  </div>
+                ))}
+              </div>
+              <div className="card">
+                <div style={{ fontSize: 10, color: gold, textTransform: "uppercase", letterSpacing: 2, fontWeight: 600, marginBottom: 12 }}>Planned hires (12 mo)</div>
+                {["+ 2 Community Managers","+ 1 Client Success Lead","+ 1 Growth Marketing"].map(c => (
+                  <div key={c} style={{ fontSize: 12, color: textMuted, padding: "7px 0", borderBottom: "0.5px solid rgba(255,255,255,0.05)", display: "flex", gap: 8, alignItems: "center" }}>
+                    <div style={{ width: 4, height: 4, borderRadius: "50%", background: green, opacity: 0.6, flexShrink: 0 }} />{c}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 6, label: "Use of Funds",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, height: "100%", justifyContent: "center" }}>
+            <SlideHeader label="Use of Funds" title="Where the $60,000 Goes" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              {[
+                { cat: "Content Production", pct: "40%", pctN: 40, amt: "$24,000", items: ["Director & crew fees (Adam Cyril)","Studio / location costs","Editing & post-production pipeline"], c: gold, glow: glowGold },
+                { cat: "Paid Growth & Distribution", pct: "25%", pctN: 25, amt: "$15,000", items: ["Paid social amplification","Funnel testing & iteration","Platform ad spend (Meta / YouTube)"], c: accent, glow: glowBlue },
+                { cat: "Tech & Automation Stack", pct: "20%", pctN: 20, amt: "$12,000", items: ["CRM & email sequence build","Skool community infrastructure","AI automation & systems (Nicholas)"], c: green, glow: glowGreen },
+                { cat: "Operations & Reserve", pct: "15%", pctN: 15, amt: "$9,000", items: ["Ops team coordination","Contingency / working capital","Community manager onboarding"], c: "#C97FD4", glow: "0 0 24px rgba(201,127,212,0.15)" },
+              ].map(c => (
+                <div key={c.cat} className="card" style={{ boxShadow: c.glow }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: textPrimary }}>{c.cat}</div>
+                    <div style={{ fontSize: 26, fontWeight: 700, color: c.c, letterSpacing: "-1px" }}>{c.pct}</div>
+                  </div>
+                  <div style={{ fontSize: 17, color: c.c, marginBottom: 6, fontWeight: 500 }}>{c.amt}</div>
+                  <div className="bar-track"><div style={{ width: c.pct, height: 3, background: c.c, borderRadius: 2, boxShadow: `0 0 8px ${c.c}` }} /></div>
+                  {c.items.map(i => (
+                    <div key={i} style={{ fontSize: 12, color: textMuted, padding: "3px 0", display: "flex", gap: 8 }}>
+                      <span style={{ color: c.c, opacity: 0.7 }}>·</span>{i}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 7, label: "Return Model",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, height: "100%", justifyContent: "center" }}>
+            <SlideHeader label="Return Model" title="Dave's Investment Path to 2–3×" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, marginBottom: 4 }}>
+              {[
+                { scenario: "Conservative", mult: "2×", ret: "$120K", timeline: "18–24 mo", members: "5,000", rev: "$250K/mo", c: accent, glow: glowBlue },
+                { scenario: "Base Case", mult: "2.5×", ret: "$150K", timeline: "15–18 mo", members: "7,500", rev: "$375K/mo", c: gold, glow: glowGold, featured: true },
+                { scenario: "Upside", mult: "3×", ret: "$180K", timeline: "12–15 mo", members: "10,000", rev: "$500K/mo", c: green, glow: glowGreen },
+              ].map(s => (
+                <div key={s.scenario} className="card" style={{ textAlign: "center", position: "relative", boxShadow: s.featured ? "0 0 40px rgba(212,168,67,0.2), 0 0 1px rgba(212,168,67,0.4)" : s.glow, border: s.featured ? "0.5px solid rgba(212,168,67,0.35)" : "0.5px solid rgba(255,255,255,0.08)" }}>
+                  {s.featured && <div style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: gold, color: "#0a0800", fontSize: 9.5, fontWeight: 700, padding: "3px 14px", borderRadius: 20, letterSpacing: 1.5, whiteSpace: "nowrap", textTransform: "uppercase" }}>Base case</div>}
+                  <div style={{ fontSize: 12, color: textMuted, marginBottom: 4, marginTop: s.featured ? 6 : 0 }}>{s.scenario}</div>
+                  <div style={{ fontSize: 44, fontWeight: 700, color: s.c, letterSpacing: "-2px" }}>{s.mult}</div>
+                  <div style={{ fontSize: 22, color: textPrimary, fontWeight: 600, marginBottom: 14 }}>{s.ret}</div>
+                  {[["Timeline", s.timeline],["Members", s.members],["Revenue", s.rev]].map(([k, v]) => (
+                    <div key={k} style={{ fontSize: 12, color: textMuted, padding: "4px 0", borderTop: "0.5px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between" }}>
+                      <span>{k}</span><span style={{ color: textPrimary, fontWeight: 500 }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <div className="card">
+              <div style={{ fontSize: 10, color: gold, fontWeight: 600, marginBottom: 14, textTransform: "uppercase", letterSpacing: 2 }}>Return structure</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                {[
+                  { q: "Investment", a: "$60,000 (one-time)" },
+                  { q: "Structure", a: "Revenue share / equity stake (TBD)" },
+                  { q: "Repayment trigger", a: "Upon reaching revenue milestones" },
+                  { q: "Profit participation", a: "Pro-rata on net community revenue" },
+                ].map(r => (
+                  <div key={r.q} style={{ borderLeft: "2px solid rgba(212,168,67,0.3)", paddingLeft: 14 }}>
+                    <div style={{ fontSize: 11, color: textMuted, marginBottom: 2 }}>{r.q}</div>
+                    <div style={{ fontSize: 13, color: textPrimary, fontWeight: 500 }}>{r.a}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: "rgba(52,199,123,0.05)", border: "0.5px solid rgba(52,199,123,0.18)", borderRadius: 12, padding: "12px 18px", fontSize: 12.5, color: "rgba(52,199,123,0.85)" }}>
+              At 400 paid upgrades/mo × $50/mo avg. ticket, the community reaches cash-flow positive within months of launch. Dave's capital is the ignition, not the ongoing fuel.
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 8, label: "Skool Benchmarks",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", gap: 22, height: "100%", justifyContent: "center" }}>
+            <SlideHeader label="Market Validation" title="Top Skool Communities — Proven at Scale" />
+            <div style={{ borderRadius: 14, overflow: "hidden", border: "0.5px solid rgba(255,255,255,0.08)" }}>
+              <table>
+                <thead><tr>{["#","Community","Founder","Niche","Members","MRR (est.)","ARR (est.)"].map(h => <th key={h}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {[
+                    ["1","The Skool Games","Sam Ovens","Community building / SaaS","85,000+","~$850K","~$10.2M"],
+                    ["2","Hormozi's Acquisition.com","Alex Hormozi","Business growth","70,000+","~$700K","~$8.4M"],
+                    ["3","Facilitator Club","Community builders","Facilitation / coaching","40,000+","~$400K","~$4.8M"],
+                    ["4","Synthesizer School","Cody Schneider","Content & AI creators","25,000+","~$250K","~$3.0M"],
+                    ["5","Copy That!","Alex Cattoni","Copywriting / marketing","20,000+","~$200K","~$2.4M"],
+                  ].map((row, i) => (
+                    <tr key={i}>
+                      {row.map((cell, j) => (
+                        <td key={j} style={{ color: j===5 ? green : j===6 ? gold : j===0 ? textMuted : textPrimary, fontWeight: j===5||j===6 ? 600 : 400, fontSize: j===0 ? 11 : 13 }}>{cell}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+              {[
+                { n: "$10.2M", label: "Top community ARR", sub: "The ceiling is proven", c: gold, glow: glowGold },
+                { n: "$2.4M+", label: "Avg. ARR top 5", sub: "Consistent across niches", c: accent, glow: glowBlue },
+                { n: "$500K", label: "DrewCodeHQ target MRR", sub: "Conservative vs. comps", c: green, glow: glowGreen },
+              ].map(c => (
+                <div key={c.n} className="metric" style={{ boxShadow: c.glow }}>
+                  <div style={{ fontSize: 30, fontWeight: 700, color: c.c, letterSpacing: "-1px" }}>{c.n}</div>
+                  <div style={{ fontSize: 12, color: textPrimary, marginTop: 6, fontWeight: 500 }}>{c.label}</div>
+                  <div style={{ fontSize: 11, color: textMuted, marginTop: 3 }}>{c.sub}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: "rgba(52,199,123,0.05)", border: "0.5px solid rgba(52,199,123,0.18)", borderRadius: 12, padding: "12px 20px", fontSize: 12.5, color: "rgba(52,199,123,0.85)" }}>
+              <strong style={{ color: green }}>Takeaway:</strong> These are real, documented communities on the same platform. DrewCodeHQ's $500K/mo target MRR is achievable — it's roughly what the #5 community does annually. The model works.
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 9, label: "The Ask",
+        render: () => (
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%", gap: 26, textAlign: "center" }}>
+            <SlideHeader label="The Ask" title="Simple. Structured. Time-bound." center={true} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14, width: "100%" }}>
+              {[
+                { n: "$60,000", label: "Total investment", c: gold, glow: glowGold },
+                { n: "2–3×", label: "Target return", c: accent, glow: glowBlue },
+                { n: "18 mo", label: "Target timeline", c: green, glow: glowGreen },
+              ].map(c => (
+                <div key={c.n} className="card" style={{ padding: "28px 16px", boxShadow: c.glow }}>
+                  <div style={{ fontSize: 38, fontWeight: 700, color: c.c, letterSpacing: "-1.5px" }}>{c.n}</div>
+                  <div style={{ fontSize: 12, color: textMuted, marginTop: 8 }}>{c.label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="card" style={{ maxWidth: 540, width: "100%", textAlign: "left", boxShadow: glowGold }}>
+              <div style={{ fontSize: 10, color: gold, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, marginBottom: 14 }}>What we're asking Dave to fund</div>
+              {[
+                ["Content production with Adam Cyril","Professional-grade video that converts"],
+                ["Ops team execution","Arno, Nicholas, Sakib & Dawson fully deployed"],
+                ["Paid growth acceleration","Shortened timeline to 10K member milestone"],
+                ["Automation stack build-out","Reduces ongoing cost per acquisition at scale"],
+              ].map(([t, s]) => (
+                <div key={t} className="check-row">
+                  <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(52,199,123,0.12)", border: "0.5px solid rgba(52,199,123,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                    <span style={{ color: green, fontSize: 11, fontWeight: 700 }}>✓</span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 13, color: textPrimary, fontWeight: 500 }}>{t}</div>
+                    <div style={{ fontSize: 12, color: textMuted, marginTop: 2 }}>{s}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 13, color: textMuted, maxWidth: 440, lineHeight: 1.8 }}>
+              The team is assembled. The model is validated. The content director is ready. <span style={{ color: textPrimary, fontWeight: 500 }}>Time to execute.</span>
+            </div>
+          </div>
+        )
+      }
+    ];
+
+    function App() {
+      const [cur, setCur] = useState(0);
+      const slide = slides[cur];
+      return (
+        <div className="deck">
+          <div className="nav">
+            {slides.map((s, i) => (
+              <button key={s.id} className={`nav-btn${i === cur ? " active" : ""}`} onClick={() => setCur(i)}>
+                {s.id}. {s.label}
+              </button>
+            ))}
+          </div>
+          <div className="slide">{slide.render()}</div>
+          <div className="footer">
+            <button className="foot-btn" onClick={() => setCur(Math.max(0, cur - 1))} disabled={cur === 0}>← Prev</button>
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: 1 }}>{cur + 1} / {slides.length}</span>
+            <button className="foot-btn" onClick={() => setCur(Math.min(slides.length - 1, cur + 1))} disabled={cur === slides.length - 1}>Next →</button>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
