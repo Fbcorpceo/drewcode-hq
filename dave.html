@@ -37,6 +37,9 @@
     .g2s { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .frow { display: flex; gap: 12px; }
     .tbl-wrap { border-radius: 14px; overflow: hidden; border: 0.5px solid rgba(255,255,255,0.08); }
+    .pw-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 24px; background: #080C12; padding: 0 24px; }
+    .pw-input { padding: 14px 20px; background: rgba(255,255,255,0.05); border-radius: 8px; color: #F5F7FA; font-size: 15px; width: 100%; max-width: 280px; outline: none; font-family: inherit; text-align: center; transition: border-color 0.2s; }
+    .pw-btn { padding: 12px 40px; background: rgba(212,168,67,0.1); border: 0.5px solid rgba(212,168,67,0.4); border-radius: 8px; color: #D4A843; font-size: 13px; cursor: pointer; font-family: inherit; letter-spacing: 1px; }
     @media (max-width: 680px) {
       .slide { padding: 20px 16px; }
       .footer { padding: 12px 16px; }
@@ -45,11 +48,10 @@
       .g3 { grid-template-columns: 1fr; }
       .g2 { grid-template-columns: 1fr; }
       .g2s { grid-template-columns: 1fr; }
-      .g3m { grid-template-columns: 1fr 1fr; }
+      .g3m { grid-template-columns: 1fr 1fr !important; }
       .frow { flex-direction: column; }
-      .cover-h { font-size: 38px !important; letter-spacing: -1px !important; }
-      .slide-h { font-size: 22px !important; }
-      .scenario-wrap { grid-template-columns: 1fr !important; }
+      .r-title { font-size: 22px !important; }
+      .r-cover { font-size: 38px !important; letter-spacing: -1px !important; }
       .tbl-wrap { overflow-x: auto; }
       table { min-width: 480px; }
       th { padding: 8px 10px !important; font-size: 9px !important; }
@@ -61,328 +63,349 @@
   <div id="root"></div>
   <script type="text/babel">
     const { useState } = React;
+
     const PASSWORD = "dave2024";
-    const gold="#D4A843",tp="#F5F7FA",tm="#7A8A9A",ac="#3B9EFF",gr="#34C77B";
-    const gG="0 0 24px rgba(212,168,67,0.18),0 0 2px rgba(212,168,67,0.12)";
-    const gB="0 0 24px rgba(59,158,255,0.15)";
-    const gGr="0 0 24px rgba(52,199,123,0.15)";
+    const gold = "#D4A843", tp = "#F5F7FA", tm = "#7A8A9A", ac = "#3B9EFF", gr = "#34C77B";
+    const gG = "0 0 24px rgba(212,168,67,0.18),0 0 2px rgba(212,168,67,0.12)";
+    const gB = "0 0 24px rgba(59,158,255,0.15)";
+    const gGr = "0 0 24px rgba(52,199,123,0.15)";
 
-    function H({label,title,center=false}){
-      return <div style={{textAlign:center?"center":"left",marginBottom:4}}>
-        <div style={{fontSize:10,color:gold,letterSpacing:3.5,textTransform:"uppercase",fontWeight:600,marginBottom:10,opacity:0.85}}>{label}</div>
-        <div className="slide-h" style={{fontSize:30,fontWeight:700,color:tp,lineHeight:1.2,letterSpacing:"-0.5px"}}>{title}</div>
-      </div>;
-    }
-
-    function Av({name}){
-      const i=name.split(" ").map(n=>n[0]).join("");
-      return <div style={{width:42,height:42,borderRadius:"50%",background:"rgba(59,158,255,0.12)",border:"0.5px solid rgba(59,158,255,0.25)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:600,color:ac,flexShrink:0,boxShadow:gB}}>{i}</div>;
-    }
-
-    const slides=[
-      {id:1,label:"Cover",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",minHeight:"60vh",textAlign:"center",gap:24}}>
-          <div style={{position:"relative",display:"inline-block"}}>
-            <div style={{position:"absolute",inset:-60,background:"radial-gradient(circle,rgba(212,168,67,0.08) 0%,transparent 70%)",borderRadius:"50%",pointerEvents:"none"}}/>
-            <div style={{fontSize:10,letterSpacing:5,color:gold,fontWeight:600,textTransform:"uppercase",opacity:0.8,marginBottom:16}}>Confidential · Investment Memo</div>
-            <div className="cover-h" style={{fontSize:58,fontWeight:700,color:tp,lineHeight:1,letterSpacing:"-2px"}}>DrewCodeHQ</div>
-            <div style={{fontSize:17,color:gold,fontWeight:500,marginTop:12,opacity:0.9}}>Skool Community Platform</div>
-          </div>
-          <div style={{width:48,height:1,background:"linear-gradient(90deg,transparent,#D4A843,transparent)"}}/>
-          <div style={{fontSize:15,color:tm,maxWidth:420,lineHeight:1.8,padding:"0 8px"}}>A $60,000 investment opportunity targeting a <span style={{color:tp,fontWeight:500}}>2–3× return</span> over 18 months through a high-conversion online community business.</div>
-          <div style={{padding:"12px 28px",border:"0.5px solid rgba(212,168,67,0.4)",borderRadius:8,fontSize:12,color:gold,letterSpacing:2,textTransform:"uppercase",background:"rgba(212,168,67,0.05)",boxShadow:gG}}>Presented to Avroham D Berenbaum</div>
+    function H({ label, title, center }) {
+      return (
+        <div style={{ textAlign: center ? "center" : "left", marginBottom: 4 }}>
+          <div style={{ fontSize: 10, color: gold, letterSpacing: 3.5, textTransform: "uppercase", fontWeight: 600, marginBottom: 10, opacity: 0.85 }}>{label}</div>
+          <div className="r-title" style={{ fontSize: 30, fontWeight: 700, color: tp, lineHeight: 1.2, letterSpacing: "-0.5px" }}>{title}</div>
         </div>
-      )},
-      {id:2,label:"The Opportunity",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",gap:22}}>
-          <H label="The Opportunity" title="Why Skool. Why Now."/>
+      );
+    }
+
+    function Av({ name }) {
+      const i = name.split(" ").map(n => n[0]).join("");
+      return (
+        <div style={{ width: 42, height: 42, borderRadius: "50%", background: "rgba(59,158,255,0.12)", border: "0.5px solid rgba(59,158,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, color: ac, flexShrink: 0, boxShadow: gB }}>{i}</div>
+      );
+    }
+
+    function Slide1() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", minHeight: "60vh", textAlign: "center", gap: 24 }}>
+          <div style={{ position: "relative", display: "inline-block" }}>
+            <div style={{ position: "absolute", inset: -60, background: "radial-gradient(circle,rgba(212,168,67,0.08) 0%,transparent 70%)", borderRadius: "50%", pointerEvents: "none" }} />
+            <div style={{ fontSize: 10, letterSpacing: 5, color: gold, fontWeight: 600, textTransform: "uppercase", opacity: 0.8, marginBottom: 16 }}>Confidential · Investment Memo</div>
+            <div className="r-cover" style={{ fontSize: 58, fontWeight: 700, color: tp, lineHeight: 1, letterSpacing: "-2px" }}>DrewCodeHQ</div>
+            <div style={{ fontSize: 17, color: gold, fontWeight: 500, marginTop: 12, opacity: 0.9 }}>Skool Community Platform</div>
+          </div>
+          <div style={{ width: 48, height: 1, background: "linear-gradient(90deg,transparent,#D4A843,transparent)" }} />
+          <div style={{ fontSize: 15, color: tm, maxWidth: 420, lineHeight: 1.8, padding: "0 8px" }}>A $60,000 investment opportunity targeting a <span style={{ color: tp, fontWeight: 500 }}>2–3× return</span> over 18 months through a high-conversion online community business.</div>
+          <div style={{ padding: "12px 28px", border: "0.5px solid rgba(212,168,67,0.4)", borderRadius: 8, fontSize: 12, color: gold, letterSpacing: 2, textTransform: "uppercase", background: "rgba(212,168,67,0.05)", boxShadow: gG }}>Presented to Avroham D Berenbaum</div>
+        </div>
+      );
+    }
+
+    function Slide2() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+          <H label="The Opportunity" title="Why Skool. Why Now." />
           <div className="g3">
-            {[{n:"$4.4B+",label:"Creator economy projected size by 2025",sub:"Skool is the infrastructure layer",glow:gB,c:ac},{n:"10,000",label:"Target paid members",sub:"14 month runway",glow:gG,c:gold},{n:"$500K+",label:"Projected monthly revenue at scale",sub:"$6M annual run rate",glow:gGr,c:gr}].map(c=>(
-              <div key={c.n} className="card" style={{textAlign:"center",boxShadow:c.glow}}>
-                <div style={{fontSize:32,fontWeight:700,color:c.c,letterSpacing:"-1px"}}>{c.n}</div>
-                <div style={{fontSize:13,color:tp,marginTop:8,lineHeight:1.6}}>{c.label}</div>
-                <div style={{fontSize:11,color:tm,marginTop:4}}>{c.sub}</div>
+            {[{ n: "$4.4B+", label: "Creator economy projected size by 2025", sub: "Skool is the infrastructure layer", glow: gB, c: ac }, { n: "10,000", label: "Target paid members", sub: "14 month runway", glow: gG, c: gold }, { n: "$500K+", label: "Projected monthly revenue at scale", sub: "$6M annual run rate", glow: gGr, c: gr }].map(c => (
+              <div key={c.n} className="card" style={{ textAlign: "center", boxShadow: c.glow }}>
+                <div style={{ fontSize: 32, fontWeight: 700, color: c.c, letterSpacing: "-1px" }}>{c.n}</div>
+                <div style={{ fontSize: 13, color: tp, marginTop: 8, lineHeight: 1.6 }}>{c.label}</div>
+                <div style={{ fontSize: 11, color: tm, marginTop: 4 }}>{c.sub}</div>
               </div>
             ))}
           </div>
           <div className="card">
-            <div style={{fontSize:11,color:tm,marginBottom:10,letterSpacing:1,textTransform:"uppercase"}}>The core thesis</div>
-            <div style={{fontSize:14,color:tp,lineHeight:1.8}}>Skool communities with high-quality content, a proven ops team, and a premium content director convert at predictable rates. DrewCodeHQ has all three. The $60K funds the content engine and growth infrastructure to reach the paid-member inflection point.</div>
+            <div style={{ fontSize: 11, color: tm, marginBottom: 10, letterSpacing: 1, textTransform: "uppercase" }}>The core thesis</div>
+            <div style={{ fontSize: 14, color: tp, lineHeight: 1.8 }}>Skool communities with high-quality content, a proven ops team, and a premium content director convert at predictable rates. DrewCodeHQ has all three. The $60K funds the content engine and growth infrastructure to reach the paid-member inflection point.</div>
           </div>
         </div>
-      )},
-      {id:3,label:"Business Model",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",gap:20}}>
-          <H label="Business Model" title="How the Revenue Engine Works"/>
+      );
+    }
+
+    function Slide3() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <H label="Business Model" title="How the Revenue Engine Works" />
           <div className="tbl-wrap">
             <table>
-              <thead><tr>{["Stage","Volume","Conversion","Action"].map(h=><th key={h}>{h}</th>)}</tr></thead>
+              <thead><tr>{["Stage", "Volume", "Conversion", "Action"].map(h => <th key={h}>{h}</th>)}</tr></thead>
               <tbody>
-                {[["Monthly Video Views","100,000","—","3 Reels/wk + podcast repurposing"],["Free Tier Joins","2,000 / mo","2% of views","7-Day Challenge CTA"],["Paid Upgrades","400 / mo","20% of free","Day 3/5/7 email sequence"],["Target Members","10,000","14 months","Sustained execution"],["Monthly Revenue","$500K+","At 10K members","$6M annual run rate"]].map((row,i)=>(
-                  <tr key={i} style={{background:i===4?"rgba(52,199,123,0.06)":undefined}}>
-                    {row.map((cell,j)=><td key={j} style={{color:j===1&&i===4?gr:j===1?gold:undefined,fontWeight:i===4&&j===1?700:400}}>{cell}</td>)}
+                {[["Monthly Video Views", "100,000", "—", "3 Reels/wk + podcast repurposing"], ["Free Tier Joins", "2,000 / mo", "2% of views", "7-Day Challenge CTA"], ["Paid Upgrades", "400 / mo", "20% of free", "Day 3/5/7 email sequence"], ["Target Members", "10,000", "14 months", "Sustained execution"], ["Monthly Revenue", "$500K+", "At 10K members", "$6M annual run rate"]].map((row, i) => (
+                  <tr key={i} style={{ background: i === 4 ? "rgba(52,199,123,0.06)" : undefined }}>
+                    {row.map((cell, j) => <td key={j} style={{ color: j === 1 && i === 4 ? gr : j === 1 ? gold : undefined, fontWeight: i === 4 && j === 1 ? 700 : 400 }}>{cell}</td>)}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
           <div className="frow">
-            {[{icon:"↑",label:"Recurring revenue",desc:"Monthly subscriptions = predictable cashflow",c:ac},{icon:"∞",label:"Zero inventory",desc:"Digital product — 100% margin on new members",c:gold},{icon:"⟳",label:"Compounding growth",desc:"Community value rises with every new member",c:gr}].map(p=>(
-              <div key={p.label} className="card" style={{flex:1}}>
-                <div style={{fontSize:20,color:p.c,marginBottom:6}}>{p.icon}</div>
-                <div style={{fontSize:13,color:tp,fontWeight:500,marginBottom:4}}>{p.label}</div>
-                <div style={{fontSize:12,color:tm,lineHeight:1.6}}>{p.desc}</div>
+            {[{ icon: "↑", label: "Recurring revenue", desc: "Monthly subscriptions = predictable cashflow", c: ac }, { icon: "∞", label: "Zero inventory", desc: "Digital product — 100% margin on new members", c: gold }, { icon: "⟳", label: "Compounding growth", desc: "Community value rises with every new member", c: gr }].map(p => (
+              <div key={p.label} className="card" style={{ flex: 1 }}>
+                <div style={{ fontSize: 20, color: p.c, marginBottom: 6 }}>{p.icon}</div>
+                <div style={{ fontSize: 13, color: tp, fontWeight: 500, marginBottom: 4 }}>{p.label}</div>
+                <div style={{ fontSize: 12, color: tm, lineHeight: 1.6 }}>{p.desc}</div>
               </div>
             ))}
           </div>
         </div>
-      )},
-      {id:4,label:"Content Strategy",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",gap:20}}>
-          <H label="Content Strategy" title="The Acquisition Engine"/>
+      );
+    }
+
+    function Slide4() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <H label="Content Strategy" title="The Acquisition Engine" />
           <div className="g2">
-            <div className="card" style={{boxShadow:gG,display:"flex",flexDirection:"column",gap:14}}>
-              <div style={{fontSize:10,color:gold,fontWeight:600,textTransform:"uppercase",letterSpacing:2}}>Content Director</div>
-              <div style={{fontSize:24,color:tp,fontWeight:700,letterSpacing:"-0.5px"}}>Adam Cyril</div>
-              <div style={{fontSize:13,color:tm,lineHeight:1.7}}>Professional director handling all visual production. Cinematic quality content positioned for premium brand perception and high-intent audience targeting.</div>
-              <div style={{display:"flex",flexDirection:"column",gap:8}}>
-                <div className="award-row"><span style={{color:gold,fontSize:14,marginTop:1}}>★</span><span style={{fontSize:12,color:tp,lineHeight:1.5}}><span style={{color:gold,fontWeight:600}}>Winner</span> — Best Short Doc, Hollywood International Independent Documentary Awards <span style={{color:tm}}>(Director/Editor)</span></span></div>
-                <div className="award-row"><span style={{color:gold,fontSize:14,marginTop:1}}>★</span><span style={{fontSize:12,color:tp,lineHeight:1.5}}><span style={{color:gold,fontWeight:600}}>Winner</span> — Doc Short, International Independent Film Awards</span></div>
+            <div className="card" style={{ boxShadow: gG, display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ fontSize: 10, color: gold, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Content Director</div>
+              <div style={{ fontSize: 24, color: tp, fontWeight: 700, letterSpacing: "-0.5px" }}>Adam Cyril</div>
+              <div style={{ fontSize: 13, color: tm, lineHeight: 1.7 }}>Professional director handling all visual production. Cinematic quality content positioned for premium brand perception and high-intent audience targeting.</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div className="award-row"><span style={{ color: gold, fontSize: 14, marginTop: 1 }}>★</span><span style={{ fontSize: 12, color: tp, lineHeight: 1.5 }}><span style={{ color: gold, fontWeight: 600 }}>Winner</span> — Best Short Doc, Hollywood International Independent Documentary Awards <span style={{ color: tm }}>(Director/Editor)</span></span></div>
+                <div className="award-row"><span style={{ color: gold, fontSize: 14, marginTop: 1 }}>★</span><span style={{ fontSize: 12, color: tp, lineHeight: 1.5 }}><span style={{ color: gold, fontWeight: 600 }}>Winner</span> — Doc Short, International Independent Film Awards</span></div>
               </div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {["Brand films","Reels","Podcast video","Short-form"].map(t=><span key={t} className="tag">{t}</span>)}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {["Brand films", "Reels", "Podcast video", "Short-form"].map(t => <span key={t} className="tag">{t}</span>)}
               </div>
             </div>
-            <div className="card" style={{display:"flex",flexDirection:"column",gap:14}}>
-              <div style={{fontSize:10,color:gold,fontWeight:600,textTransform:"uppercase",letterSpacing:2}}>Weekly Output</div>
-              {[{label:"3 Reels / week",sub:"Primary top-of-funnel driver"},{label:"Podcast repurposing",sub:"Long-form → multi-clip extraction"},{label:"7-Day challenge funnel",sub:"Free → paid conversion mechanism"},{label:"Day 3 / 5 / 7 email sequence",sub:"Automated paid upgrade path"}].map(i=>(
-                <div key={i.label} style={{borderLeft:"2px solid rgba(212,168,67,0.4)",paddingLeft:14}}>
-                  <div style={{fontSize:13,color:tp,fontWeight:500}}>{i.label}</div>
-                  <div style={{fontSize:12,color:tm,marginTop:2}}>{i.sub}</div>
+            <div className="card" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ fontSize: 10, color: gold, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Weekly Output</div>
+              {[{ label: "3 Reels / week", sub: "Primary top-of-funnel driver" }, { label: "Podcast repurposing", sub: "Long-form → multi-clip extraction" }, { label: "7-Day challenge funnel", sub: "Free → paid conversion mechanism" }, { label: "Day 3 / 5 / 7 email sequence", sub: "Automated paid upgrade path" }].map(i => (
+                <div key={i.label} style={{ borderLeft: "2px solid rgba(212,168,67,0.4)", paddingLeft: 14 }}>
+                  <div style={{ fontSize: 13, color: tp, fontWeight: 500 }}>{i.label}</div>
+                  <div style={{ fontSize: 12, color: tm, marginTop: 2 }}>{i.sub}</div>
                 </div>
               ))}
             </div>
           </div>
-          <div style={{background:"rgba(52,199,123,0.05)",border:"0.5px solid rgba(52,199,123,0.2)",borderRadius:12,padding:"14px 20px",fontSize:13,color:"rgba(52,199,123,0.9)"}}>
-            <strong style={{color:gr}}>Key insight:</strong> Content quality is the primary lever for conversion rate. Professional direction de-risks the top-of-funnel — a 1% improvement in free-tier conversion adds $50K/mo at scale.
+          <div style={{ background: "rgba(52,199,123,0.05)", border: "0.5px solid rgba(52,199,123,0.2)", borderRadius: 12, padding: "14px 20px", fontSize: 13, color: "rgba(52,199,123,0.9)" }}>
+            <strong style={{ color: gr }}>Key insight:</strong> Content quality is the primary lever for conversion rate. Professional direction de-risks the top-of-funnel — a 1% improvement in free-tier conversion adds $50K/mo at scale.
           </div>
         </div>
-      )},
-      {id:5,label:"The Team",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",gap:20}}>
-          <H label="The Team" title="Operators Who've Done This Before"/>
+      );
+    }
+
+    function Slide5() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <H label="The Team" title="Operators Who've Done This Before" />
           <div className="g2s">
-            {[{name:"Arno Schwarz",role:"Head of Operations",desc:"Scalable systems, process architecture & execution frameworks for high-growth digital businesses."},{name:"Nicholas Del Negro",role:"Head of Systems & Automations",desc:"Backend & AI agent infrastructure, automation systems, full-stack development."},{name:"Sakib Huq",role:"Head of Sales Operations",desc:"Outbound systems, pipeline optimization, and scalable client acquisition frameworks."},{name:"Dawson Shumway",role:"Operations Manager",desc:"Execution, client delivery, workflow coordination, and high-performance operational standards."}].map(p=>(
-              <div key={p.name} className="card" style={{display:"flex",gap:14,alignItems:"flex-start"}}>
-                <Av name={p.name}/>
+            {[{ name: "Arno Schwarz", role: "Head of Operations", desc: "Scalable systems, process architecture & execution frameworks for high-growth digital businesses." }, { name: "Nicholas Del Negro", role: "Head of Systems & Automations", desc: "Backend & AI agent infrastructure, automation systems, full-stack development." }, { name: "Sakib Huq", role: "Head of Sales Operations", desc: "Outbound systems, pipeline optimization, and scalable client acquisition frameworks." }, { name: "Dawson Shumway", role: "Operations Manager", desc: "Execution, client delivery, workflow coordination, and high-performance operational standards." }].map(p => (
+              <div key={p.name} className="card" style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+                <Av name={p.name} />
                 <div>
-                  <div style={{fontSize:14,fontWeight:600,color:tp}}>{p.name}</div>
-                  <div style={{fontSize:11,color:gold,marginBottom:6,opacity:0.85}}>{p.role}</div>
-                  <div style={{fontSize:12,color:tm,lineHeight:1.6}}>{p.desc}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: tp }}>{p.name}</div>
+                  <div style={{ fontSize: 11, color: gold, marginBottom: 6, opacity: 0.85 }}>{p.role}</div>
+                  <div style={{ fontSize: 12, color: tm, lineHeight: 1.6 }}>{p.desc}</div>
                 </div>
               </div>
             ))}
           </div>
           <div className="g2s">
             <div className="card">
-              <div style={{fontSize:10,color:gold,textTransform:"uppercase",letterSpacing:2,fontWeight:600,marginBottom:12}}>Core competencies</div>
-              {["Community operations at scale","Automation & AI implementation","Retention system design","Luxury brand positioning"].map(c=>(
-                <div key={c} style={{fontSize:12,color:tm,padding:"7px 0",borderBottom:"0.5px solid rgba(255,255,255,0.05)",display:"flex",gap:8,alignItems:"center"}}>
-                  <div style={{width:4,height:4,borderRadius:"50%",background:gold,opacity:0.6,flexShrink:0}}/>{c}
+              <div style={{ fontSize: 10, color: gold, textTransform: "uppercase", letterSpacing: 2, fontWeight: 600, marginBottom: 12 }}>Core competencies</div>
+              {["Community operations at scale", "Automation & AI implementation", "Retention system design", "Luxury brand positioning"].map(c => (
+                <div key={c} style={{ fontSize: 12, color: tm, padding: "7px 0", borderBottom: "0.5px solid rgba(255,255,255,0.05)", display: "flex", gap: 8, alignItems: "center" }}>
+                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: gold, opacity: 0.6, flexShrink: 0 }} />{c}
                 </div>
               ))}
             </div>
             <div className="card">
-              <div style={{fontSize:10,color:gold,textTransform:"uppercase",letterSpacing:2,fontWeight:600,marginBottom:12}}>Planned hires (12 mo)</div>
-              {["+ 2 Community Managers","+ 1 Client Success Lead","+ 1 Growth Marketing"].map(c=>(
-                <div key={c} style={{fontSize:12,color:tm,padding:"7px 0",borderBottom:"0.5px solid rgba(255,255,255,0.05)",display:"flex",gap:8,alignItems:"center"}}>
-                  <div style={{width:4,height:4,borderRadius:"50%",background:gr,opacity:0.6,flexShrink:0}}/>{c}
+              <div style={{ fontSize: 10, color: gold, textTransform: "uppercase", letterSpacing: 2, fontWeight: 600, marginBottom: 12 }}>Planned hires (12 mo)</div>
+              {["+ 2 Community Managers", "+ 1 Client Success Lead", "+ 1 Growth Marketing"].map(c => (
+                <div key={c} style={{ fontSize: 12, color: tm, padding: "7px 0", borderBottom: "0.5px solid rgba(255,255,255,0.05)", display: "flex", gap: 8, alignItems: "center" }}>
+                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: gr, opacity: 0.6, flexShrink: 0 }} />{c}
                 </div>
               ))}
             </div>
           </div>
         </div>
-      )},
-      {id:6,label:"Use of Funds",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",gap:20}}>
-          <H label="Use of Funds" title="Where the $60,000 Goes"/>
+      );
+    }
+
+    function Slide6() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <H label="Use of Funds" title="Where the $60,000 Goes" />
           <div className="g2">
-            {[{cat:"Content Production",pct:"40%",pctN:40,amt:"$24,000",items:["Director & crew fees (Adam Cyril)","Studio / location costs","Editing & post-production pipeline"],c:gold,glow:gG},{cat:"Paid Growth & Distribution",pct:"25%",pctN:25,amt:"$15,000",items:["Paid social amplification","Funnel testing & iteration","Platform ad spend (Meta / YouTube)"],c:ac,glow:gB},{cat:"Tech & Automation Stack",pct:"20%",pctN:20,amt:"$12,000",items:["CRM & email sequence build","Skool community infrastructure","AI automation & systems (Nicholas)"],c:gr,glow:gGr},{cat:"Operations & Reserve",pct:"15%",pctN:15,amt:"$9,000",items:["Ops team coordination","Contingency / working capital","Community manager onboarding"],c:"#C97FD4",glow:"0 0 24px rgba(201,127,212,0.15)"}].map(c=>(
-              <div key={c.cat} className="card" style={{boxShadow:c.glow}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:6}}>
-                  <div style={{fontSize:13,fontWeight:600,color:tp}}>{c.cat}</div>
-                  <div style={{fontSize:24,fontWeight:700,color:c.c,letterSpacing:"-1px"}}>{c.pct}</div>
+            {[{ cat: "Content Production", pct: "40%", pctN: 40, amt: "$24,000", items: ["Director & crew fees (Adam Cyril)", "Studio / location costs", "Editing & post-production pipeline"], c: gold, glow: gG }, { cat: "Paid Growth & Distribution", pct: "25%", pctN: 25, amt: "$15,000", items: ["Paid social amplification", "Funnel testing & iteration", "Platform ad spend (Meta / YouTube)"], c: ac, glow: gB }, { cat: "Tech & Automation Stack", pct: "20%", pctN: 20, amt: "$12,000", items: ["CRM & email sequence build", "Skool community infrastructure", "AI automation & systems (Nicholas)"], c: gr, glow: gGr }, { cat: "Operations & Reserve", pct: "15%", pctN: 15, amt: "$9,000", items: ["Ops team coordination", "Contingency / working capital", "Community manager onboarding"], c: "#C97FD4", glow: "0 0 24px rgba(201,127,212,0.15)" }].map(c => (
+              <div key={c.cat} className="card" style={{ boxShadow: c.glow }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: tp }}>{c.cat}</div>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: c.c, letterSpacing: "-1px" }}>{c.pct}</div>
                 </div>
-                <div style={{fontSize:17,color:c.c,marginBottom:6,fontWeight:500}}>{c.amt}</div>
-                <div className="bar-track"><div style={{width:c.pct,height:3,background:c.c,borderRadius:2,boxShadow:`0 0 8px ${c.c}`}}/></div>
-                {c.items.map(i=><div key={i} style={{fontSize:12,color:tm,padding:"3px 0",display:"flex",gap:8}}><span style={{color:c.c,opacity:0.7}}>·</span>{i}</div>)}
+                <div style={{ fontSize: 17, color: c.c, marginBottom: 6, fontWeight: 500 }}>{c.amt}</div>
+                <div className="bar-track"><div style={{ width: c.pct, height: 3, background: c.c, borderRadius: 2, boxShadow: `0 0 8px ${c.c}` }} /></div>
+                {c.items.map(i => <div key={i} style={{ fontSize: 12, color: tm, padding: "3px 0", display: "flex", gap: 8 }}><span style={{ color: c.c, opacity: 0.7 }}>·</span>{i}</div>)}
               </div>
             ))}
           </div>
         </div>
-      )},
-      {id:7,label:"Return Model",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",gap:20}}>
-          <H label="Return Model" title="Dave's Investment Path to 2–3×"/>
-          <div className="g3 scenario-wrap">
-            {[{scenario:"Conservative",mult:"2×",ret:"$120K",timeline:"18–24 mo",members:"5,000",rev:"$250K/mo",c:ac,glow:gB},{scenario:"Base Case",mult:"2.5×",ret:"$150K",timeline:"15–18 mo",members:"7,500",rev:"$375K/mo",c:gold,glow:gG,featured:true},{scenario:"Upside",mult:"3×",ret:"$180K",timeline:"12–15 mo",members:"10,000",rev:"$500K/mo",c:gr,glow:gGr}].map(s=>(
-              <div key={s.scenario} className="card" style={{textAlign:"center",position:"relative",boxShadow:s.featured?"0 0 40px rgba(212,168,67,0.2),0 0 1px rgba(212,168,67,0.4)":s.glow,border:s.featured?"0.5px solid rgba(212,168,67,0.35)":"0.5px solid rgba(255,255,255,0.08)"}}>
-                {s.featured&&<div style={{position:"absolute",top:-11,left:"50%",transform:"translateX(-50%)",background:gold,color:"#0a0800",fontSize:9.5,fontWeight:700,padding:"3px 14px",borderRadius:20,letterSpacing:1.5,whiteSpace:"nowrap",textTransform:"uppercase"}}>Base case</div>}
-                <div style={{fontSize:12,color:tm,marginBottom:4,marginTop:s.featured?6:0}}>{s.scenario}</div>
-                <div style={{fontSize:42,fontWeight:700,color:s.c,letterSpacing:"-2px"}}>{s.mult}</div>
-                <div style={{fontSize:20,color:tp,fontWeight:600,marginBottom:12}}>{s.ret}</div>
-                {[["Timeline",s.timeline],["Members",s.members],["Revenue",s.rev]].map(([k,v])=>(
-                  <div key={k} style={{fontSize:12,color:tm,padding:"4px 0",borderTop:"0.5px solid rgba(255,255,255,0.05)",display:"flex",justifyContent:"space-between"}}>
-                    <span>{k}</span><span style={{color:tp,fontWeight:500}}>{v}</span>
+      );
+    }
+
+    function Slide7() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <H label="Return Model" title="Dave's Investment Path to 2–3×" />
+          <div className="g3">
+            {[{ scenario: "Conservative", mult: "2×", ret: "$120K", timeline: "18–24 mo", members: "5,000", rev: "$250K/mo", c: ac, glow: gB }, { scenario: "Base Case", mult: "2.5×", ret: "$150K", timeline: "15–18 mo", members: "7,500", rev: "$375K/mo", c: gold, glow: gG, featured: true }, { scenario: "Upside", mult: "3×", ret: "$180K", timeline: "12–15 mo", members: "10,000", rev: "$500K/mo", c: gr, glow: gGr }].map(s => (
+              <div key={s.scenario} className="card" style={{ textAlign: "center", position: "relative", boxShadow: s.featured ? "0 0 40px rgba(212,168,67,0.2),0 0 1px rgba(212,168,67,0.4)" : s.glow, border: s.featured ? "0.5px solid rgba(212,168,67,0.35)" : "0.5px solid rgba(255,255,255,0.08)" }}>
+                {s.featured && <div style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: gold, color: "#0a0800", fontSize: 9.5, fontWeight: 700, padding: "3px 14px", borderRadius: 20, letterSpacing: 1.5, whiteSpace: "nowrap", textTransform: "uppercase" }}>Base case</div>}
+                <div style={{ fontSize: 12, color: tm, marginBottom: 4, marginTop: s.featured ? 6 : 0 }}>{s.scenario}</div>
+                <div style={{ fontSize: 42, fontWeight: 700, color: s.c, letterSpacing: "-2px" }}>{s.mult}</div>
+                <div style={{ fontSize: 20, color: tp, fontWeight: 600, marginBottom: 12 }}>{s.ret}</div>
+                {[["Timeline", s.timeline], ["Members", s.members], ["Revenue", s.rev]].map(([k, v]) => (
+                  <div key={k} style={{ fontSize: 12, color: tm, padding: "4px 0", borderTop: "0.5px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between" }}>
+                    <span>{k}</span><span style={{ color: tp, fontWeight: 500 }}>{v}</span>
                   </div>
                 ))}
               </div>
             ))}
           </div>
           <div className="card">
-            <div style={{fontSize:10,color:gold,fontWeight:600,marginBottom:14,textTransform:"uppercase",letterSpacing:2}}>Return structure</div>
+            <div style={{ fontSize: 10, color: gold, fontWeight: 600, marginBottom: 14, textTransform: "uppercase", letterSpacing: 2 }}>Return structure</div>
             <div className="g2s">
-              {[{q:"Investment",a:"$60,000 (one-time)"},{q:"Structure",a:"Revenue share / equity stake (TBD)"},{q:"Repayment trigger",a:"Upon reaching revenue milestones"},{q:"Profit participation",a:"Pro-rata on net community revenue"}].map(r=>(
-                <div key={r.q} style={{borderLeft:"2px solid rgba(212,168,67,0.3)",paddingLeft:14}}>
-                  <div style={{fontSize:11,color:tm,marginBottom:2}}>{r.q}</div>
-                  <div style={{fontSize:13,color:tp,fontWeight:500}}>{r.a}</div>
+              {[{ q: "Investment", a: "$60,000 (one-time)" }, { q: "Structure", a: "Revenue share / equity stake (TBD)" }, { q: "Repayment trigger", a: "Upon reaching revenue milestones" }, { q: "Profit participation", a: "Pro-rata on net community revenue" }].map(r => (
+                <div key={r.q} style={{ borderLeft: "2px solid rgba(212,168,67,0.3)", paddingLeft: 14 }}>
+                  <div style={{ fontSize: 11, color: tm, marginBottom: 2 }}>{r.q}</div>
+                  <div style={{ fontSize: 13, color: tp, fontWeight: 500 }}>{r.a}</div>
                 </div>
               ))}
             </div>
           </div>
-          <div style={{background:"rgba(52,199,123,0.05)",border:"0.5px solid rgba(52,199,123,0.18)",borderRadius:12,padding:"12px 18px",fontSize:12.5,color:"rgba(52,199,123,0.85)"}}>
+          <div style={{ background: "rgba(52,199,123,0.05)", border: "0.5px solid rgba(52,199,123,0.18)", borderRadius: 12, padding: "12px 18px", fontSize: 12.5, color: "rgba(52,199,123,0.85)" }}>
             At 400 paid upgrades/mo × $50/mo avg. ticket, the community reaches cash-flow positive within months of launch. Dave's capital is the ignition, not the ongoing fuel.
           </div>
         </div>
-      )},
-      {id:8,label:"Skool Benchmarks",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",gap:20}}>
-          <H label="Market Validation" title="Top Skool Communities — Proven at Scale"/>
+      );
+    }
+
+    function Slide8() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <H label="Market Validation" title="Top Skool Communities — Proven at Scale" />
           <div className="tbl-wrap">
             <table>
-              <thead><tr>{["#","Community","Founder","Niche","Members","MRR (est.)","ARR (est.)"].map(h=><th key={h}>{h}</th>)}</tr></thead>
+              <thead><tr>{["#", "Community", "Founder", "Niche", "Members", "MRR (est.)", "ARR (est.)"].map(h => <th key={h}>{h}</th>)}</tr></thead>
               <tbody>
-                {[["1","The Skool Games","Sam Ovens","Community building / SaaS","85,000+","~$850K","~$10.2M"],["2","Hormozi's Acquisition.com","Alex Hormozi","Business growth","70,000+","~$700K","~$8.4M"],["3","Facilitator Club","Community builders","Facilitation / coaching","40,000+","~$400K","~$4.8M"],["4","Synthesizer School","Cody Schneider","Content & AI creators","25,000+","~$250K","~$3.0M"],["5","Copy That!","Alex Cattoni","Copywriting / marketing","20,000+","~$200K","~$2.4M"]].map((row,i)=>(
-                  <tr key={i}>{row.map((cell,j)=><td key={j} style={{color:j===5?gr:j===6?gold:j===0?tm:tp,fontWeight:j===5||j===6?600:400,fontSize:j===0?11:13}}>{cell}</td>)}</tr>
+                {[["1", "The Skool Games", "Sam Ovens", "Community building / SaaS", "85,000+", "~$850K", "~$10.2M"], ["2", "Hormozi's Acquisition.com", "Alex Hormozi", "Business growth", "70,000+", "~$700K", "~$8.4M"], ["3", "Facilitator Club", "Community builders", "Facilitation / coaching", "40,000+", "~$400K", "~$4.8M"], ["4", "Synthesizer School", "Cody Schneider", "Content & AI creators", "25,000+", "~$250K", "~$3.0M"], ["5", "Copy That!", "Alex Cattoni", "Copywriting / marketing", "20,000+", "~$200K", "~$2.4M"]].map((row, i) => (
+                  <tr key={i}>{row.map((cell, j) => <td key={j} style={{ color: j === 5 ? gr : j === 6 ? gold : j === 0 ? tm : tp, fontWeight: j === 5 || j === 6 ? 600 : 400, fontSize: j === 0 ? 11 : 13 }}>{cell}</td>)}</tr>
                 ))}
               </tbody>
             </table>
           </div>
           <div className="g3 g3m">
-            {[{n:"$10.2M",label:"Top community ARR",sub:"The ceiling is proven",c:gold,glow:gG},{n:"$2.4M+",label:"Avg. ARR top 5",sub:"Consistent across niches",c:ac,glow:gB},{n:"$500K",label:"DrewCodeHQ target MRR",sub:"Conservative vs. comps",c:gr,glow:gGr}].map(c=>(
-              <div key={c.n} className="metric" style={{boxShadow:c.glow}}>
-                <div style={{fontSize:28,fontWeight:700,color:c.c,letterSpacing:"-1px"}}>{c.n}</div>
-                <div style={{fontSize:12,color:tp,marginTop:6,fontWeight:500}}>{c.label}</div>
-                <div style={{fontSize:11,color:tm,marginTop:3}}>{c.sub}</div>
+            {[{ n: "$10.2M", label: "Top community ARR", sub: "The ceiling is proven", c: gold, glow: gG }, { n: "$2.4M+", label: "Avg. ARR top 5", sub: "Consistent across niches", c: ac, glow: gB }, { n: "$500K", label: "DrewCodeHQ target MRR", sub: "Conservative vs. comps", c: gr, glow: gGr }].map(c => (
+              <div key={c.n} className="metric" style={{ boxShadow: c.glow }}>
+                <div style={{ fontSize: 28, fontWeight: 700, color: c.c, letterSpacing: "-1px" }}>{c.n}</div>
+                <div style={{ fontSize: 12, color: tp, marginTop: 6, fontWeight: 500 }}>{c.label}</div>
+                <div style={{ fontSize: 11, color: tm, marginTop: 3 }}>{c.sub}</div>
               </div>
             ))}
           </div>
-          <div style={{background:"rgba(52,199,123,0.05)",border:"0.5px solid rgba(52,199,123,0.18)",borderRadius:12,padding:"12px 20px",fontSize:12.5,color:"rgba(52,199,123,0.85)"}}>
-            <strong style={{color:gr}}>Takeaway:</strong> These are real, documented communities on the same platform. DrewCodeHQ's $500K/mo target MRR is achievable — it's roughly what the #5 community does annually. The model works.
+          <div style={{ background: "rgba(52,199,123,0.05)", border: "0.5px solid rgba(52,199,123,0.18)", borderRadius: 12, padding: "12px 20px", fontSize: 12.5, color: "rgba(52,199,123,0.85)" }}>
+            <strong style={{ color: gr }}>Takeaway:</strong> These are real, documented communities on the same platform. DrewCodeHQ's $500K/mo target MRR is achievable — it's roughly what the #5 community does annually. The model works.
           </div>
         </div>
-      )},
-      {id:9,label:"The Ask",render:()=>(
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:24,textAlign:"center"}}>
-          <H label="The Ask" title="Simple. Structured. Time-bound." center={true}/>
-          <div className="g3" style={{width:"100%"}}>
-            {[{n:"$60,000",label:"Total investment",c:gold,glow:gG},{n:"2–3×",label:"Target return",c:ac,glow:gB},{n:"18 mo",label:"Target timeline",c:gr,glow:gGr}].map(c=>(
-              <div key={c.n} className="card" style={{padding:"24px 16px",boxShadow:c.glow}}>
-                <div style={{fontSize:36,fontWeight:700,color:c.c,letterSpacing:"-1.5px"}}>{c.n}</div>
-                <div style={{fontSize:12,color:tm,marginTop:8}}>{c.label}</div>
+      );
+    }
+
+    function Slide9() {
+      return (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24, textAlign: "center" }}>
+          <H label="The Ask" title="Simple. Structured. Time-bound." center={true} />
+          <div className="g3" style={{ width: "100%" }}>
+            {[{ n: "$60,000", label: "Total investment", c: gold, glow: gG }, { n: "2–3×", label: "Target return", c: ac, glow: gB }, { n: "18 mo", label: "Target timeline", c: gr, glow: gGr }].map(c => (
+              <div key={c.n} className="card" style={{ padding: "24px 16px", boxShadow: c.glow }}>
+                <div style={{ fontSize: 36, fontWeight: 700, color: c.c, letterSpacing: "-1.5px" }}>{c.n}</div>
+                <div style={{ fontSize: 12, color: tm, marginTop: 8 }}>{c.label}</div>
               </div>
             ))}
           </div>
-          <div className="card" style={{maxWidth:540,width:"100%",textAlign:"left",boxShadow:gG}}>
-            <div style={{fontSize:10,color:gold,fontWeight:600,textTransform:"uppercase",letterSpacing:2,marginBottom:14}}>What we're asking Dave to fund</div>
-            {[["Content production with Adam Cyril","Professional-grade video that converts"],["Ops team execution","Arno, Nicholas, Sakib & Dawson fully deployed"],["Paid growth acceleration","Shortened timeline to 10K member milestone"],["Automation stack build-out","Reduces ongoing cost per acquisition at scale"]].map(([t,s])=>(
+          <div className="card" style={{ maxWidth: 540, width: "100%", textAlign: "left", boxShadow: gG }}>
+            <div style={{ fontSize: 10, color: gold, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2, marginBottom: 14 }}>What we're asking Dave to fund</div>
+            {[["Content production with Adam Cyril", "Professional-grade video that converts"], ["Ops team execution", "Arno, Nicholas, Sakib & Dawson fully deployed"], ["Paid growth acceleration", "Shortened timeline to 10K member milestone"], ["Automation stack build-out", "Reduces ongoing cost per acquisition at scale"]].map(([t, s]) => (
               <div key={t} className="check-row">
-                <div style={{width:20,height:20,borderRadius:"50%",background:"rgba(52,199,123,0.12)",border:"0.5px solid rgba(52,199,123,0.3)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
-                  <span style={{color:gr,fontSize:11,fontWeight:700}}>✓</span>
+                <div style={{ width: 20, height: 20, borderRadius: "50%", background: "rgba(52,199,123,0.12)", border: "0.5px solid rgba(52,199,123,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
+                  <span style={{ color: gr, fontSize: 11, fontWeight: 700 }}>✓</span>
                 </div>
                 <div>
-                  <div style={{fontSize:13,color:tp,fontWeight:500}}>{t}</div>
-                  <div style={{fontSize:12,color:tm,marginTop:2}}>{s}</div>
+                  <div style={{ fontSize: 13, color: tp, fontWeight: 500 }}>{t}</div>
+                  <div style={{ fontSize: 12, color: tm, marginTop: 2 }}>{s}</div>
                 </div>
               </div>
             ))}
           </div>
-          <div style={{fontSize:13,color:tm,maxWidth:440,lineHeight:1.8,padding:"0 8px"}}>
-            The team is assembled. The model is validated. The content director is ready. <span style={{color:tp,fontWeight:500}}>Time to execute.</span>
+          <div style={{ fontSize: 13, color: tm, maxWidth: 440, lineHeight: 1.8, padding: "0 8px" }}>
+            The team is assembled. The model is validated. The content director is ready. <span style={{ color: tp, fontWeight: 500 }}>Time to execute.</span>
           </div>
         </div>
-      )}
-    ];
+      );
+    }
 
-    function PasswordGate({onUnlock}){
-      const [val,setVal]=useState("");
-      const [err,setErr]=useState(false);
-      const check=()=>{
-        if(val===PASSWORD){onUnlock();}
-        else{setErr(true);setTimeout(()=>setErr(false),1500);}
-      };
+    const slideComponents = [Slide1, Slide2, Slide3, Slide4, Slide5, Slide6, Slide7, Slide8, Slide9];
+    const slideLabels = ["Cover","The Opportunity","Business Model","Content Strategy","The Team","Use of Funds","Return Model","Skool Benchmarks","The Ask"];
+
+    function Deck() {
+      const [cur, setCur] = useState(0);
+      const SlideComp = slideComponents[cur];
       return (
-        <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",gap:24,background:"#080C12",padding:"0 24px"}}>
-          <div style={{fontSize:11,letterSpacing:5,color:gold,textTransform:"uppercase",opacity:0.8}}>Confidential Access</div>
-          <div style={{fontSize:38,fontWeight:700,color:tp,letterSpacing:"-1px",textAlign:"center"}}>DrewCodeHQ</div>
-          <div style={{fontSize:13,color:tm}}>Investor Deck · Private</div>
-          <div style={{width:48,height:1,background:"linear-gradient(90deg,transparent,#D4A843,transparent)"}}/>
+        <div className="deck">
+          <div className="nav">
+            {slideLabels.map((label, i) => (
+              <button key={i} className={"nav-btn" + (i === cur ? " active" : "")} onClick={() => setCur(i)}>{i + 1}. {label}</button>
+            ))}
+          </div>
+          <div className="slide"><SlideComp /></div>
+          <div className="footer">
+            <button className="foot-btn" onClick={() => setCur(Math.max(0, cur - 1))} disabled={cur === 0}>← Prev</button>
+            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", letterSpacing: 1 }}>{cur + 1} / {slideLabels.length}</span>
+            <button className="foot-btn" onClick={() => setCur(Math.min(slideLabels.length - 1, cur + 1))} disabled={cur === slideLabels.length - 1}>Next →</button>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [unlocked, setUnlocked] = useState(false);
+      const [val, setVal] = useState("");
+      const [err, setErr] = useState(false);
+
+      const check = () => {
+        if (val === PASSWORD) {
+          setUnlocked(true);
+        } else {
+          setErr(true);
+          setTimeout(() => setErr(false), 1500);
+        }
+      };
+
+      if (unlocked) return <Deck />;
+
+      return (
+        <div className="pw-wrap">
+          <div style={{ fontSize: 10, letterSpacing: 5, color: gold, textTransform: "uppercase", opacity: 0.8 }}>Confidential Access</div>
+          <div style={{ fontSize: 38, fontWeight: 700, color: tp, letterSpacing: "-1px", textAlign: "center" }}>DrewCodeHQ</div>
+          <div style={{ fontSize: 13, color: tm }}>Investor Deck · Private</div>
+          <div style={{ width: 48, height: 1, background: "linear-gradient(90deg,transparent,#D4A843,transparent)" }} />
           <input
+            className="pw-input"
             type="password"
             placeholder="Enter password"
             value={val}
-            onChange={e=>setVal(e.target.value)}
-            onKeyDown={e=>e.key==="Enter"&&check()}
-            style={{padding:"14px 20px",background:"rgba(255,255,255,0.05)",border:`0.5px solid ${err?"#E24B4A":"rgba(255,255,255,0.15)"}`,borderRadius:8,color:tp,fontSize:15,width:"100%",maxWidth:280,outline:"none",fontFamily:"inherit",textAlign:"center",transition:"border-color 0.2s"}}
+            onChange={e => setVal(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && check()}
+            style={{ border: "0.5px solid " + (err ? "#E24B4A" : "rgba(255,255,255,0.15)") }}
           />
-          <button onClick={check} style={{padding:"12px 40px",background:"rgba(212,168,67,0.1)",border:"0.5px solid rgba(212,168,67,0.4)",borderRadius:8,color:gold,fontSize:13,cursor:"pointer",fontFamily:"inherit",letterSpacing:1,transition:"all 0.2s"}}>
-            {err?"Incorrect ✕":"Enter →"}
-          </button>
-          {err&&<div style={{fontSize:12,color:"#E24B4A"}}>Incorrect password. Try again.</div>}
+          <button className="pw-btn" onClick={check}>{err ? "Incorrect ✕" : "Enter →"}</button>
+          {err && <div style={{ fontSize: 12, color: "#E24B4A" }}>Incorrect password. Try again.</div>}
         </div>
       );
     }
 
-    function App(){
-      const [unlocked,setUnlocked]=useState(false);
-      const [cur,setCur]=useState(0);
-      if(!unlocked) return <PasswordGate onUnlock={()=>setUnlocked(true)}/>;
-      const slide=slides[cur];
-      return (
-        <div className="deck">
-          <div className="nav">
-            {slides.map((s,i)=>(
-              <button key={s.id} className={`nav-btn${i===cur?" active":""}`} onClick={()=>setCur(i)}>{s.id}. {s.label}</button>
-            ))}
-          </div>
-          <div className="slide">{slide.render()}</div>
-          <div className="footer">
-            <button className="foot-btn" onClick={()=>setCur(Math.max(0,cur-1))} disabled={cur===0}>← Prev</button>
-            <span style={{fontSize:11,color:"rgba(255,255,255,0.25)",letterSpacing:1}}>{cur+1} / {slides.length}</span>
-            <button className="foot-btn" onClick={()=>setCur(Math.min(slides.length-1,cur+1))} disabled={cur===slides.length-1}>Next →</button>
-          </div>
-        </div>
-      );
-    }      const [cur,setCur]=useState(0);
-      const slide=slides[cur];
-      return (
-        <div className="deck">
-          <div className="nav">
-            {slides.map((s,i)=>(
-              <button key={s.id} className={`nav-btn${i===cur?" active":""}`} onClick={()=>setCur(i)}>{s.id}. {s.label}</button>
-            ))}
-          </div>
-          <div className="slide">{slide.render()}</div>
-          <div className="footer">
-            <button className="foot-btn" onClick={()=>setCur(Math.max(0,cur-1))} disabled={cur===0}>← Prev</button>
-            <span style={{fontSize:11,color:"rgba(255,255,255,0.25)",letterSpacing:1}}>{cur+1} / {slides.length}</span>
-            <button className="foot-btn" onClick={()=>setCur(Math.min(slides.length-1,cur+1))} disabled={cur===slides.length-1}>Next →</button>
-          </div>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
