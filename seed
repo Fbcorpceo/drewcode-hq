@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#080C12;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;min-height:100vh}
+#app{display:flex;flex-direction:column;min-height:100vh}
+.nav{display:flex;flex-wrap:wrap;gap:2px;padding:12px 20px;background:rgba(8,12,18,0.98);border-bottom:0.5px solid rgba(255,255,255,0.07);position:sticky;top:0;z-index:10}
+.nb{padding:5px 12px;font-size:11px;border:none;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:500;background:transparent;color:rgba(255,255,255,0.35);transition:all .2s}
+.nb:hover{color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.05)}
+.nb.on{background:rgba(212,168,67,0.15);color:#D4A843}
+.slide{flex:1;padding:36px 44px;display:flex;flex-direction:column;justify-content:center}
+.footer{display:flex;justify-content:space-between;align-items:center;padding:12px 44px;border-top:0.5px solid rgba(255,255,255,0.07);background:rgba(8,12,18,0.98)}
+.fb{padding:7px 20px;background:transparent;border:0.5px solid rgba(255,255,255,0.12);border-radius:8px;color:rgba(255,255,255,0.4);cursor:pointer;font-size:12px;font-family:inherit;transition:all .2s}
+.fb:hover:not([disabled]){border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.8)}
+.fb[disabled]{opacity:0.2;cursor:not-allowed}
+.pg{font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:1px}
+.card{background:rgba(255,255,255,0.035);border:0.5px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px 22px}
+.label{font-size:10px;color:#D4A843;letter-spacing:3.5px;text-transform:uppercase;font-weight:600;opacity:.85;margin-bottom:10px}
+.title{font-size:28px;font-weight:700;color:#F5F7FA;line-height:1.2;letter-spacing:-.5px;margin-bottom:4px}
+.sub{font-size:13px;color:#7A8A9A;line-height:1.75;margin-top:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.g5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:10px}
+.metric{background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px 14px;text-align:center}
+.bar{width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin:10px 0 14px}
+.dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.row{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:0.5px solid rgba(255,255,255,0.05)}
+.divider{width:48px;height:1px;background:linear-gradient(90deg,transparent,#D4A843,transparent);margin:14px auto}
+@media(max-width:680px){
+  .slide{padding:20px 16px}.footer{padding:12px 16px}.nav{padding:10px 12px;gap:1px}
+  .nb{padding:5px 9px;font-size:10px}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}
+  .g4{grid-template-columns:1fr 1fr}.g5{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div id="pw-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:20px;background:#080C12;padding:0 24px;text-align:center">
+  <div style="font-size:10px;letter-spacing:5px;color:#D4A843;text-transform:uppercase;opacity:.8">Confidential Access</div>
+  <div style="font-size:38px;font-weight:700;color:#F5F7FA;letter-spacing:-1px">Foundational Builders Corp.</div>
+  <div style="font-size:13px;color:#7A8A9A">Investor Deck · Private</div>
+  <div style="width:48px;height:1px;background:linear-gradient(90deg,transparent,#D4A843,transparent)"></div>
+  <input id="pw-input" type="password" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPw()" style="padding:14px 20px;background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.15);border-radius:8px;color:#F5F7FA;font-size:15px;width:100%;max-width:280px;outline:none;font-family:inherit;text-align:center;transition:border-color .2s"/>
+  <button onclick="checkPw()" id="pw-btn" style="padding:12px 40px;background:rgba(212,168,67,0.1);border:0.5px solid rgba(212,168,67,0.4);border-radius:8px;color:#D4A843;font-size:13px;cursor:pointer;font-family:inherit;letter-spacing:1px">Enter →</button>
+  <div id="pw-err" style="font-size:12px;color:#E24B4A;display:none">Incorrect password. Try again.</div>
+</div>
+
+<div id="app" style="display:none">
+  <div class="nav" id="nav"></div>
+  <div class="slide" id="slide"></div>
+  <div class="footer">
+    <button class="fb" id="prev" onclick="go(-1)">← Prev</button>
+    <span class="pg" id="pg">1 / 10</span>
+    <button class="fb" id="next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+<script>
+const G="#D4A843",TP="#F5F7FA",TM="#7A8A9A",AC="#3B9EFF",GR="#34C77B",CR="#FF6B4A";
+
+const slides=[
+
+// 1 COVER
+()=>`<div style="display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:55vh;text-align:center;gap:20px">
+  <div class="label">Confidential · Investment Memo · 2026</div>
+  <div style="font-size:54px;font-weight:700;color:${TP};line-height:1;letter-spacing:-2px">Foundational</div>
+  <div style="font-size:54px;font-weight:700;color:${G};line-height:1;letter-spacing:-2px;margin-top:-8px">Builders Corp.</div>
+  <div style="font-size:14px;color:${TM}">Construction · Media · Technology · Beverly Hills, CA</div>
+  <div style="width:48px;height:1px;background:linear-gradient(90deg,transparent,${G},transparent)"></div>
+  <div style="font-size:14px;color:${TM};max-width:460px;line-height:1.85">The only licensed GC in America led by a CEO who has built a <span style="color:${TP};font-weight:500">full-stack media empire</span> alongside a $15M–$40M+ active construction pipeline.</div>
+  <div class="g4" style="width:100%;max-width:560px">
+    ${[["$5,000,000","Raise Target"],["CA · AZ · FL","Licensed GC"],["$96M+","Construction Value Built"],["$150M","Rebuild Fund"]].map(([n,l])=>`
+    <div class="card" style="padding:14px 10px;text-align:center">
+      <div style="font-size:18px;font-weight:700;color:${G}">${n}</div>
+      <div style="font-size:11px;color:${TM};margin-top:4px">${l}</div>
+    </div>`).join("")}
+  </div>
+  <div style="padding:10px 24px;border:0.5px solid rgba(212,168,67,0.4);border-radius:8px;font-size:11px;color:${G};letter-spacing:1.5px;text-transform:uppercase;background:rgba(212,168,67,0.05)">Andrew Robles · President & CEO · DREW@FBCORP.COM · 310.499.8716</div>
+</div>`,
+
+// 2 EXEC SUMMARY
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">Executive Summary</div><div class="title">The Investment Thesis</div></div>
+  <div class="g2" style="gap:16px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[["The business","Licensed GC with 5 revenue verticals: multifamily, luxury residential, ADU, fire rebuild, and commercial. Active pipeline across CA, AZ & FL. Type III & V construction. Self-performing trades. 45+ years of combined family experience with $8B+ institutional pedigree."],
+         ["The opportunity","$5M raise targeting: surety bonding to unlock $10M–$50M contracts, mobilization for 85/71/147-unit pipeline, seed capital for the $150M Palisades rebuild fund, and FBC Media production — including the Altadena documentary series."],
+         ["The return profile","Three compounding cycles: active construction at 8–15% GC margin on 6–18 month cycles; media infrastructure generating compounding brand equity; geographic expansion into AZ and FL with higher margin and less competition."]
+      ].map(([h,t])=>`<div class="card"><div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">${h}</div><div style="font-size:12px;color:${TM};line-height:1.75">${t}</div></div>`).join("")}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="card" style="border-color:rgba(212,168,67,0.2)">
+        <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">The unfair advantage</div>
+        <div style="font-size:12px;color:${TM};line-height:1.75;margin-bottom:12px">No other licensed GC in the country has a CEO with 1.1M+ quarterly video views, Getty Images press coverage, Beverly Hills Fashion Week sponsorship, and a media platform generating inbound deal flow 24/7 — without a sales team.</div>
+        <div style="font-size:13px;color:${TP};font-weight:500;font-style:italic;border-left:2px solid rgba(212,168,67,0.5);padding-left:14px;line-height:1.7">"The brand IS the customer acquisition moat. It cannot be bought, replicated, or manufactured by any competitor."</div>
+      </div>
+      <div class="g2" style="gap:8px">
+        ${[["Founded","2020 · Beverly Hills"],["Licensed","CA · AZ · FL"],["Experience","45+ Combined Yrs"],["Raise","$5,000,000"]].map(([k,v])=>`
+        <div style="background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px">
+          <div style="font-size:10px;color:${TM};margin-bottom:4px">${k}</div>
+          <div style="font-size:13px;font-weight:600;color:${TP}">${v}</div>
+        </div>`).join("")}
+      </div>
+      <div style="background:rgba(212,168,67,0.05);border:0.5px solid rgba(212,168,67,0.3);border-radius:12px;padding:14px 16px">
+        <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">The moat</div>
+        <div style="font-size:13px;color:${TP};font-weight:500;margin-bottom:8px;line-height:1.5">A media-powered brand generating inbound deal flow, investor conversations, and buyer leads 24/7 — without a sales team.</div>
+        <div style="font-size:12px;color:${TM};line-height:1.7">No competitor can buy this. Andrew's 1.1M+ quarterly views, Getty press, and national editorial coverage mean FB Corp is discovered before any competitor gets a call. Every new piece of content deepens the moat. Every new build deepens the content. The loop is permanent.</div>
+      </div>
+    </div>
+  </div>
+</div>`,
+
+// 3 THE BUSINESS
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">The Business</div><div class="title">Licensed GC · Five Revenue Verticals</div></div>
+  <div class="g5">
+    ${[["Multifamily","Type III & V · Podium · 30–500+ units",AC],["Luxury Resi","Ground-up · Custom · High-end remodels",G],["ADU","LA market leader since 2022","#C97FD4"],["Fire Rebuild","Palisades · Malibu · Altadena",CR],["Commercial","Retail · Office · Design-build",GR]].map(([t,s,c])=>`
+    <div class="card" style="padding:14px 12px">
+      <div style="font-size:12px;font-weight:600;color:${c};margin-bottom:6px">${t}</div>
+      <div style="font-size:11px;color:${TM};line-height:1.55">${s}</div>
+    </div>`).join("")}
+  </div>
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[["Type III & V ground-up","Complex shoring and tie-back systems. Podium and double-podium concrete foundations. The work most GCs turn down — and where FB Corp wins on both price and execution.",G],
+         ["Self-performing critical trades","In-house carpentry, electrical, and plumbing. Greater timeline control, higher quality, and captured subcontractor margin. A builder, not a middleman.",AC],
+         ["Design-build integration","Architecture, engineering, construction, and permitting under one roof. Fixed pricing eliminates budget surprises. Launched 2025 specifically for the fire rebuild market.",CR]
+      ].map(([h,t,c])=>`<div style="border-left:2px solid ${c}55;padding-left:14px"><div style="font-size:13px;font-weight:500;color:${TP};margin-bottom:3px">${h}</div><div style="font-size:12px;color:${TM};line-height:1.65">${t}</div></div>`).join("")}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${[["Multi-state operations","Licensed in CA, AZ (2025), and FL (2025). Active pipeline in Los Angeles, Scottsdale, and Miami. The CA model — refined over 14 years — replicated in two markets with less competition.",GR],
+         ["Team & family legacy","Andrew Robles (MBA Pepperdine) leads alongside George Robles (35 yrs, $8B+ Tishman), David Robles (field ops, Burrell), and El Rady (CFO, capital strategy). A dynasty scaling nationally.",AC],
+         ["Value engineering","Early material buyouts lock pricing before markets move. Off-site storage prevents theft delays. Budget adherence tracked as a core KPI across every active project.","#C97FD4"]
+      ].map(([h,t,c])=>`<div style="border-left:2px solid ${c}55;padding-left:14px"><div style="font-size:13px;font-weight:500;color:${TP};margin-bottom:3px">${h}</div><div style="font-size:12px;color:${TM};line-height:1.65">${t}</div></div>`).join("")}
+    </div>
+  </div>
+</div>`,
+
+// 4 MARKET
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">Market Opportunity</div><div class="title">Three Converging Tailwinds</div></div>
+  <div class="g3">
+    ${[
+      {h:"California rebuild & wildfire recovery",badge:"$150B+ damage",c:CR,items:["Largest residential rebuild in CA history","Design-build fixed-price program active now","Palisades · Malibu · Altadena — licensed & marketing","$150M acquisition fund forming","Media platform drives inbound leads 24/7"]},
+      {h:"LA multifamily & housing crisis",badge:"500K+ unit deficit",c:AC,items:["Active bids: 85-unit Pico, 71-unit Hollywood, 147-unit","Type III & V expertise + podium capabilities","$15M–$40M+ revenue at 8–15% GC margin","Bonding expansion unlocks larger contracts","Trusted developer partner in constrained market"]},
+      {h:"Florida & Arizona expansion",badge:"Fastest-growing states",c:GR,items:["Licensed FL & AZ as of 2025","Miami + Scottsdale active markets","Less competition than California","Higher margin opportunity","Hurricane resilience + milestone compliance (FL)"]}
+    ].map(m=>`
+    <div class="card">
+      <div style="font-size:11px;font-weight:600;color:${m.c};margin-bottom:4px">${m.badge}</div>
+      <div style="font-size:14px;font-weight:600;color:${TP};margin-bottom:12px;line-height:1.4">${m.h}</div>
+      ${m.items.map(i=>`<div class="row"><div class="dot" style="background:${m.c}"></div><div style="font-size:11px;color:${TM};line-height:1.5">${i}</div></div>`).join("")}
+    </div>`).join("")}
+  </div>
+  <div class="g3">
+    ${[["$2.1T","US construction market",G],["$150B+","CA wildfire rebuild pipeline",CR],["500K+","LA housing unit deficit",AC]].map(([n,l,c])=>`
+    <div class="metric">
+      <div style="font-size:26px;font-weight:700;color:${c};letter-spacing:-1px">${n}</div>
+      <div style="font-size:12px;color:${TP};margin-top:6px;font-weight:500">${l}</div>
+    </div>`).join("")}
+  </div>
+</div>`,
+
+// 5 FLYWHEEL
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">The Flywheel</div><div class="title">Two Engines. One CEO. Zero Competition.</div>
+  <div class="sub">Construction wins fund media. Media generates leads. Leads become contracts. Contracts fund everything.</div></div>
+  <div class="g2" style="gap:16px">
+    <div class="card" style="border-color:rgba(212,168,67,0.2)">
+      <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">FB Corp · Construction Engine</div>
+      ${[["Licensed GC · CA AZ FL","$15M–$40M active bids · self-performing trades",G],["Active Pipeline","85-unit Pico · 71-unit Hollywood · 147-unit multifamily",AC],["Fire Rebuild Program","Design-build · fixed price · Palisades, Malibu, Altadena",CR],["Bonding Expansion","Unlock $10M–$50M contracts · $1 bonding = $5–$10 contract",GR],["AZ + FL Activation","Licensed · teams forming · higher margin than CA","#C97FD4"]].map(([t,s,c])=>`
+      <div class="row"><div class="dot" style="background:${c}"></div><div><div style="font-size:13px;font-weight:500;color:${TP}">${t}</div><div style="font-size:11px;color:${TM};margin-top:2px;line-height:1.5">${s}</div></div></div>`).join("")}
+    </div>
+    <div class="card" style="border-color:rgba(59,158,255,0.15)">
+      <div style="font-size:10px;color:${AC};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">FBC Media · Content Engine</div>
+      ${[["Drew Code HQ · Flagship Show","Premier construction business podcast · deal & investor inflow 24/7",G],["Inside Altadena · Documentary","Full production · Altadena rebuild series · PBS/Netflix/streaming",CR],["Skool Community Platform","Builders + devs + entrepreneurs · YPO meets job site · recurring rev.",GR],["YouTube Channel","Construction + business content · 1.1M+ views/qtr · inbound leads",AC],["Content Team · Full Operation","Editors, producers, social managers · Andrew on camera + on site","#C97FD4"]].map(([t,s,c])=>`
+      <div class="row"><div class="dot" style="background:${c}"></div><div><div style="font-size:13px;font-weight:500;color:${TP}">${t}</div><div style="font-size:11px;color:${TM};margin-top:2px;line-height:1.5">${s}</div></div></div>`).join("")}
+    </div>
+  </div>
+  <div class="g4">
+    ${[["Construction wins","fuel content production",G],["Content generates","leads & investor flow",AC],["Leads become","signed contracts",CR],["Contracts fund","the next build + season",GR]].map(([t,s,c])=>`
+    <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;text-align:center">
+      <div style="font-size:12px;font-weight:600;color:${c}">${t}</div>
+      <div style="font-size:11px;color:${TM};margin-top:4px;line-height:1.5">${s}</div>
+    </div>`).join("")}
+  </div>
+</div>`,
+
+// 6 INSIDE ALTADENA
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">Flagship Media Asset</div><div class="title">Inside Altadena — The Show That IS the Business</div></div>
+  <div class="g2" style="gap:16px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="border-color:rgba(255,107,74,0.2)">
+        <div style="font-size:10px;color:${CR};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">The concept</div>
+        <div style="font-size:14px;color:${TP};font-weight:500;margin-bottom:10px;line-height:1.5;font-style:italic">"The first unscripted documentary series following the ground-up rebuild of homes destroyed in the 2025 LA fires."</div>
+        <div style="font-size:12px;color:${TM};line-height:1.75">Real families. Real construction timelines. Real stakes. Produced by FBC Media — featuring FB Corp's own Altadena builds as the primary storyline. Andrew Robles is the anchor. The construction IS the content.</div>
+      </div>
+      <div class="card">
+        <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Distribution strategy</div>
+        ${[["YouTube (free)","Top-of-funnel · audience building · ad revenue"],["Streaming pitch","Netflix · Hulu · Max · Apple TV+"],["Network syndication","PBS · HGTV · Discovery · NBC Local"],["Press & editorial","LA Times · Deadline · Variety · national pickup"]].map(([t,s])=>`
+        <div class="row"><div class="dot" style="background:${CR}"></div><div><span style="font-size:12px;font-weight:500;color:${TP}">${t}</span><span style="font-size:11px;color:${TM}"> — ${s}</span></div></div>`).join("")}
+      </div>
+      <div style="background:rgba(212,168,67,0.05);border:0.5px solid rgba(212,168,67,0.2);border-radius:12px;padding:12px 16px">
+        <div style="font-size:12px;color:${G};font-weight:500;margin-bottom:4px">The Magnolia comp</div>
+        <div style="font-size:12px;color:${TM};line-height:1.65">Fixer Upper generated est. $30M+ in brand equity before Chip & Joanna owned a network. We skip straight to owning both the builds AND the broadcast.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Revenue the show generates directly</div>
+        ${["YouTube AdSense + sponsorships","Streaming licensing deal","Brand partnerships — materials, tools, finance","Live events tied to build completions","Skool community upsell from viewers"].map(i=>`
+        <div class="row"><div class="dot" style="background:${G}"></div><div style="font-size:12px;color:${TM}">${i}</div></div>`).join("")}
+      </div>
+      <div class="card">
+        <div style="font-size:10px;color:${AC};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Revenue the show generates for construction</div>
+        ${["Inbound buyer leads from viewer base","Premium sale price on media-branded builds","Trade sponsorships & material partnerships","Contractor + talent recruitment pipeline","Investor conversations direct to Andrew"].map(i=>`
+        <div class="row"><div class="dot" style="background:${AC}"></div><div style="font-size:12px;color:${TM}">${i}</div></div>`).join("")}
+      </div>
+    </div>
+  </div>
+</div>`,
+
+// 7 USE OF FUNDS
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">Use of Funds</div><div class="title">Where the $5,000,000 Goes</div>
+  <div class="sub">Two machines. Built to run forever. $4M is asset-backed construction capital. $1M is the media engine that amplifies every dollar of it.</div></div>
+  <div class="g2" style="gap:16px">
+    <div class="card" style="border-color:rgba(212,168,67,0.25)">
+      <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">FB Corp · Construction Engine</div>
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:8px">
+        <div style="font-size:28px;font-weight:700;color:${G};letter-spacing:-1px">$4,000,000</div>
+        <div style="font-size:28px;font-weight:700;color:${G};opacity:.45;letter-spacing:-1px">80%</div>
+      </div>
+      <div class="bar"><div style="width:80%;height:3px;background:${G};border-radius:2px"></div></div>
+      ${[["32% · $1.6M","Surety bonding expansion — unlocks $10M–$50M multifamily contracts. Every $1 of bonding = $5–$10 in contract value.",G],
+         ["24% · $1.2M","Mobilization capital — activate 85-unit Pico Blvd, 71-unit Hollywood, 147-unit multifamily bids.",AC],
+         ["20% · $1.0M","Lot acquisition — purchase Altadena rebuild lot(s) and execute ground-up construction on first project.",CR],
+         ["4% · $0.2M","AZ + FL activation — licensed, teams forming, less competition, higher margin than CA.",GR]
+      ].map(([t,s,c])=>`
+      <div style="border-left:2px solid ${c}55;padding-left:14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;color:${c};margin-bottom:3px">${t}</div>
+        <div style="font-size:12px;color:${TM};line-height:1.6">${s}</div>
+      </div>`).join("")}
+    </div>
+    <div class="card" style="border-color:rgba(59,158,255,0.15)">
+      <div style="font-size:10px;color:${AC};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">FBC Media · Content Engine</div>
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:8px">
+        <div style="font-size:28px;font-weight:700;color:${AC};letter-spacing:-1px">$1,000,000</div>
+        <div style="font-size:28px;font-weight:700;color:${AC};opacity:.45;letter-spacing:-1px">20%</div>
+      </div>
+      <div class="bar"><div style="width:20%;height:3px;background:${AC};border-radius:2px"></div></div>
+      ${[["$350K","Inside Altadena — full TV documentary production. Pilot + first season. Crew, director, equipment, post-production.",CR],
+         ["$250K","Drew Code HQ studio upgrade — premier construction business podcast. Better studio, bigger inbound.",G],
+         ["$250K","YouTube channel — 50+ episodes, full content team, editors, producers, social managers.",GR],
+         ["$150K","Skool community platform — development, member acquisition, content systems. YPO meets job site.",AC]
+      ].map(([t,s,c])=>`
+      <div style="border-left:2px solid ${c}55;padding-left:14px;margin-bottom:12px">
+        <div style="font-size:12px;font-weight:600;color:${c};margin-bottom:3px">${t}</div>
+        <div style="font-size:12px;color:${TM};line-height:1.6">${s}</div>
+      </div>`).join("")}
+    </div>
+  </div>
+  <div style="background:rgba(52,199,123,0.05);border:0.5px solid rgba(52,199,123,0.2);border-radius:12px;padding:12px 18px;font-size:13px;color:rgba(52,199,123,0.85)">
+    <strong style="color:${GR}">Why this ratio works:</strong> The $4M construction capital is asset-backed — it converts into real property with recoverable value. The $1M media investment amplifies that asset's sale price, generates inbound deal flow, and builds a brand moat that compounds permanently.
+  </div>
+</div>`,
+
+// 8 THE ANCHOR
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">The Anchor</div><div class="title">When You Write a $5M Check — This Is Who You're Betting On</div></div>
+  <div class="g2" style="gap:16px">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card" style="border-color:rgba(212,168,67,0.2)">
+        <div style="font-size:22px;font-weight:700;color:${TP};margin-bottom:4px">Andrew Robles.</div>
+        <div style="font-size:12px;color:${G};margin-bottom:14px">President & CEO · Foundational Builders Corp.</div>
+        <div style="font-size:13px;color:${TM};line-height:1.8;margin-bottom:14px">Founded a construction company at 27. Turned down Goldman Sachs to build something real. Then built a media empire alongside it — while never leaving the job site. The only licensed GC in the United States with Getty Images press coverage, 1.1M+ quarterly video views, and a $15M–$40M+ active pipeline.</div>
+        <div style="font-size:13px;color:${TP};font-weight:500;font-style:italic;border-left:2px solid rgba(212,168,67,0.5);padding-left:14px;line-height:1.7">"$5 million doesn't just fund a company — it unlocks a category."</div>
+      </div>
+      <div class="g2" style="gap:8px">
+        ${[["MBA","Pepperdine · Finance & Econ"],["$8B+","George Robles · Tishman"],["Getty","Red carpet press coverage"],["1.1M+","Quarterly video views"]].map(([n,l])=>`
+        <div style="background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:${G}">${n}</div>
+          <div style="font-size:11px;color:${TM};margin-top:4px;line-height:1.5">${l}</div>
+        </div>`).join("")}
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px">Proof of execution — already built</div>
+      ${[["Licensed · 3 states","CA, AZ & FL. Active projects and bids running simultaneously. Not a plan — a reality.",GR],
+         ["$15M–$40M+ pipeline","Active bids: 85-unit Pico Blvd, 71-unit Hollywood, 147-unit multifamily. Plus 15 San Sebastian Newport Beach.",AC],
+         ["Fire rebuild program","Design-build 2025. Architecture, engineering, construction, permitting — one roof, fixed price. Active in Palisades, Malibu, Altadena.",CR],
+         ["1.1M+ views / quarter","YouTube + Instagram content engine generating inbound construction leads, developer relationships, and investor conversations 24/7.",G],
+         ["Getty press coverage","Beverly Hills Fashion Week named sponsor. Featured: Yahoo Finance, Miami Herald, CEO Weekly, Beverly Hills Living, Amaré Magazine.","#C97FD4"]
+      ].map(([h,t,c])=>`
+      <div class="card" style="padding:12px 16px">
+        <div style="font-size:12px;font-weight:600;color:${c};margin-bottom:4px">${h}</div>
+        <div style="font-size:12px;color:${TM};line-height:1.6">${t}</div>
+      </div>`).join("")}
+    </div>
+  </div>
+</div>`,
+
+// 9 RISK
+()=>`<div style="display:flex;flex-direction:column;gap:16px">
+  <div><div class="label">Risk Factors & Mitigants</div><div class="title">Transparent Assessment</div></div>
+  <div class="g2">
+    ${[["Construction execution risk","Self-performing critical trades reduces subcontractor dependency. George Robles' $8B Tishman pedigree provides institutional oversight. Early material buyouts lock pricing. Value engineering embedded in every bid.",CR],
+       ["Single-market concentration","Active AZ and FL expansion underway — both licensed and operational. Capital from this raise directly accelerates geographic diversification. Target: 40% revenue from non-CA markets within 24 months.",G],
+       ["Bonding capacity limitation","Bonding expansion is the #1 use of raised construction capital (32% allocation). Increased bonding unlocks $10M–$50M contract bids. CFO El Rady's capital background specifically deployed to accelerate this.",AC],
+       ["Key-person dependency","George Robles, David Robles, and El Rady provide operational depth beyond the CEO. The media platform diversifies brand equity over time. Systems and client relationships are institutionalized — not person-dependent.",GR],
+       ["Market conditions","The wildfire rebuild market is recession-resistant — demand driven by necessity, not speculation. LA's housing shortage is structural, not cyclical. Multi-state presence distributes exposure. ADU work provides counter-cyclical revenue.","#C97FD4"],
+       ["Media revenue uncertainty","Media is treated as a lead generation and brand asset — not a primary revenue line. Any media revenue is upside. Downside: zero media revenue. Upside: a standalone revenue stream worth multiples of the infrastructure investment.",TM]
+    ].map(([r,m,c])=>`
+    <div class="card" style="padding:16px 18px">
+      <div style="font-size:10px;color:${c};font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">Risk: ${r}</div>
+      <div style="font-size:12px;color:${TM};line-height:1.7"><span style="color:${GR};font-weight:600">Mitigant:</span> ${m}</div>
+    </div>`).join("")}
+  </div>
+</div>`,
+
+// 10 THE ASK
+()=>`<div style="display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+  <div><div class="label" style="text-align:center">The Investment Opportunity</div>
+  <div style="font-size:48px;font-weight:700;color:${G};letter-spacing:-2px;text-align:center">$5,000,000</div>
+  <div style="font-size:13px;color:${G};letter-spacing:2px;margin-top:6px">Equity · Revenue Share · Preferred Note · Convertible</div></div>
+  <div style="width:48px;height:1px;background:linear-gradient(90deg,transparent,${G},transparent)"></div>
+  <div style="font-size:14px;color:${TM};max-width:600px;line-height:1.85">You are looking at the only construction company in the United States led by a CEO who has built a media empire alongside a licensed contracting operation. The construction business is real. The media business is real. The market timing is real. <span style="color:${TP};font-weight:500">This raise doesn't create the company. The company already exists. This capital makes it unstoppable.</span></div>
+  <div class="g2" style="width:100%;max-width:680px;text-align:left">
+    ${[["01","Access to active deal flow","Every construction contract award, rebuild fund acquisition, and media partnership — before it goes public. Direct CEO relationship from day one. No middleman.",G,"You are at the table."],
+       ["02","Quarterly financial reporting","Full financial transparency every quarter. Project-level P&L. Budget adherence on every active contract. Direct line to Andrew Robles — no intermediaries, no surprises.",AC,"No surprises. Ever."],
+       ["03","Flexible preferred structure","Equity participation · Revenue share · Preferred equity with first-loss protection · Convertible note. Structure chosen based on your preference and target return profile.",GR,"Your structure. Your terms."],
+       ["04","Brand co-investment & positioning","Position your name alongside the only construction and media platform growing in audience, press, geographic reach, and contract pipeline every single quarter.",CR,"Your capital returns credibility."]
+    ].map(([n,h,t,c,sub])=>`
+    <div class="card">
+      <div style="font-size:22px;font-weight:700;color:${c};opacity:.35;margin-bottom:8px">${n}</div>
+      <div style="font-size:13px;font-weight:600;color:${TP};margin-bottom:8px">${h}</div>
+      <div style="font-size:12px;color:${TM};line-height:1.7;margin-bottom:10px">${t}</div>
+      <div style="font-size:12px;color:${c};font-style:italic">${sub}</div>
+    </div>`).join("")}
+  </div>
+  <div style="width:100%;max-width:680px;background:rgba(212,168,67,0.05);border:0.5px solid rgba(212,168,67,0.3);border-radius:14px;padding:22px 26px;text-align:left">
+    <div style="font-size:10px;color:${G};font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px">Recommended Structure</div>
+    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px">
+      <div style="background:rgba(212,168,67,0.12);border:0.5px solid rgba(212,168,67,0.4);border-radius:8px;padding:6px 14px;font-size:12px;color:${G};font-weight:600;white-space:nowrap">Preferred Note</div>
+      <div style="font-size:13px;color:${TP};line-height:1.7">$5M at <strong style="color:${G}">8–10% annual interest</strong>, 18–24 month maturity, with an equity conversion option at a <strong style="color:${G}">20% discount</strong> to the next round valuation. You keep control. Investors get downside protection backed by real construction assets. Equity is priced later — when the company is worth significantly more.</div>
+    </div>
+    <div style="border-top:0.5px solid rgba(255,255,255,0.07);padding-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      ${[["If equity only","15–18% for $5M","Implies $27–33M pre-money valuation — supportable given pipeline, 3-state licenses, and media reach."],["Revenue share alt","3–6% of gross rev","Until investors receive 1.5–2× back. Works for investors seeking current income over equity."],["Why not straight equity now","Undervalues the co.","$4M goes into real property. Altadena builds + show airing + pipeline converting = far higher value at next round."]].map(([h,n,t])=>`
+      <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px">
+        <div style="font-size:10px;color:${TM};margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">${h}</div>
+        <div style="font-size:13px;font-weight:600;color:${G};margin-bottom:6px">${n}</div>
+        <div style="font-size:11px;color:${TM};line-height:1.6">${t}</div>
+      </div>`).join("")}
+    </div>
+  </div>
+  <div style="padding:14px 32px;border:0.5px solid rgba(212,168,67,0.4);border-radius:10px;background:rgba(212,168,67,0.05)">
+    <div style="font-size:18px;font-weight:700;color:${G};letter-spacing:-.5px">310.499.8716</div>
+    <div style="font-size:12px;color:${TM};margin-top:4px">DREW@FBCORP.COM · fbcorp.com · Beverly Hills, CA</div>
+  </div>
+</div>`
+
+];
+
+const labels=["Cover","Executive Summary","The Business","Market Opportunity","The Flywheel","Inside Altadena","Use of Funds","The Anchor","Risk & Mitigants","The Ask"];
+let cur=0;
+
+function go(d){const n=cur+d;if(n>=0&&n<slides.length){cur=n;render();}}
+
+function render(){
+  document.getElementById("slide").innerHTML=slides[cur]();
+  document.getElementById("pg").textContent=`${cur+1} / ${slides.length}`;
+  document.getElementById("prev").disabled=cur===0;
+  document.getElementById("next").disabled=cur===slides.length-1;
+  document.querySelectorAll(".nb").forEach((b,i)=>b.classList.toggle("on",i===cur));
+}
+
+function checkPw(){
+  const v=document.getElementById("pw-input").value;
+  const err=document.getElementById("pw-err");
+  const btn=document.getElementById("pw-btn");
+  if(v==="blocks888"){
+    document.getElementById("pw-screen").style.display="none";
+    document.getElementById("app").style.display="flex";
+    document.getElementById("app").style.flexDirection="column";
+    document.getElementById("app").style.minHeight="100vh";
+    render();
+  } else {
+    err.style.display="block";
+    btn.textContent="Incorrect ✕";
+    document.getElementById("pw-input").style.borderColor="#E24B4A";
+    setTimeout(()=>{err.style.display="none";btn.textContent="Enter →";document.getElementById("pw-input").style.borderColor="rgba(255,255,255,0.15)";},1800);
+  }
+}
+
+const nav=document.getElementById("nav");
+labels.forEach((l,i)=>{
+  const b=document.createElement("button");
+  b.className="nb"+(i===0?" on":"");
+  b.textContent=`${i+1}. ${l}`;
+  b.onclick=()=>{cur=i;render();};
+  nav.appendChild(b);
+});
+
+render();
+</script>
+</body>
+</html>
