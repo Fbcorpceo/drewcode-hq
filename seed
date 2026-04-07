@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,6 +57,7 @@ body{background:#080C12;font-family:Inter,system-ui,sans-serif;color:#F5F7FA;min
 
 <script>
 var G="#D4A843",W="#F5F7FA",M="#7A8A9A",B="#3B9EFF",R="#34C77B",O="#FF6B4A",cur=0;
+var BASE="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/";
 
 document.getElementById("pbtn").onclick=unlock;
 document.getElementById("pin").onkeydown=function(e){if(e.key==="Enter")unlock();};
@@ -77,10 +79,8 @@ function unlock(){
   }
 }
 
-var BASE="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/";
 function img(src,h,opts){
-  var extra=opts||"";
-  return '<img src="'+BASE+src+'" style="width:100%;height:'+h+'px;object-fit:cover;border-radius:10px;'+extra+'" onerror="this.style.display=\'none\'"/>';
+  return '<img src="'+BASE+src+'" style="width:100%;height:'+h+'px;object-fit:cover;border-radius:10px;'+(opts||'')+'" onerror="this.style.display=\'none\'"/>';
 }
 function card(label,body,color){
   return '<div class="card"><div style="font-size:10px;color:'+(color||G)+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">'+label+'</div><div style="font-size:12px;color:'+M+';line-height:1.75">'+body+'</div></div>';
@@ -103,7 +103,6 @@ function li(color,text){
 
 var slides=[
 
-// 1 COVER
 function(){return '<div style="display:flex;gap:32px;align-items:center;min-height:58vh">'
 +'<div style="flex:1.1;display:flex;flex-direction:column;gap:16px">'
 +'<div class="lbl">Confidential · Investment Memo · 2026</div>'
@@ -121,7 +120,6 @@ function(){return '<div style="display:flex;gap:32px;align-items:center;min-heig
 +img("building2.jpg",130)
 +'</div></div>';},
 
-// 2 EXEC SUMMARY
 function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div><div class="lbl">Executive Summary</div><div class="ttl">The Investment Thesis</div></div>'
 +'<div class="g2" style="gap:16px">'
@@ -143,7 +141,6 @@ function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div style="font-size:12px;color:'+M+';line-height:1.7">Few competitors can match this. FB Corp\'s media presence, press coverage, and national editorial reach mean the company is discovered by developers, investors, and homeowners before most competitors get a call. Every new piece of content deepens the moat. Every new build deepens the content. <span style="color:'+W+';font-weight:500">The loop is permanent and it belongs entirely to FB Corp.</span></div>'
 +'</div></div></div></div>';},
 
-// 3 BUSINESS
 function(){return '<div style="display:flex;flex-direction:column;gap:14px">'
 +'<div><div class="lbl">The Business</div><div class="ttl">Licensed GC · Five Revenue Verticals</div></div>'
 +'<div class="g5">'
@@ -166,16 +163,12 @@ function(){return '<div style="display:flex;flex-direction:column;gap:14px">'
 +'<div style="font-size:10px;color:'+M+';text-align:center;letter-spacing:1px;text-transform:uppercase;opacity:.6">FB Corp completed projects</div>'
 +'</div></div></div>';},
 
-// 4 MARKET
 function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div><div class="lbl">Market Opportunity</div><div class="ttl">Three Converging Tailwinds</div></div>'
 +'<div class="g3">'
-+'<div class="card"><div style="font-size:11px;font-weight:600;color:'+O+';margin-bottom:4px">$150B+ damage</div><div style="font-size:14px;font-weight:600;color:'+W+';margin-bottom:12px;line-height:1.4">California rebuild and wildfire recovery</div>'
-+li(O,"Largest residential rebuild in CA history")+li(O,"Design-build fixed-price program active now")+li(O,"Palisades, Malibu, Altadena licensed and marketing")+li(O,"$150M acquisition fund forming")+li(O,"Media platform drives inbound leads 24/7")+'</div>'
-+'<div class="card"><div style="font-size:11px;font-weight:600;color:'+B+';margin-bottom:4px">500K+ unit deficit</div><div style="font-size:14px;font-weight:600;color:'+W+';margin-bottom:12px;line-height:1.4">LA multifamily and housing crisis</div>'
-+li(B,"Active bids: 85-unit Pico, 71-unit Hollywood, 147-unit")+li(B,"Type III and V expertise plus podium capabilities")+li(B,"$15M to $40M+ revenue at 8 to 15% GC margin")+li(B,"Bonding expansion unlocks larger contracts")+li(B,"Trusted developer partner in constrained market")+'</div>'
-+'<div class="card"><div style="font-size:11px;font-weight:600;color:'+R+';margin-bottom:4px">Fastest-growing states</div><div style="font-size:14px;font-weight:600;color:'+W+';margin-bottom:12px;line-height:1.4">Florida and Arizona expansion</div>'
-+li(R,"Licensed FL and AZ as of 2025")+li(R,"Miami and Scottsdale active markets")+li(R,"Less competition than California")+li(R,"Higher margin opportunity")+li(R,"Hurricane resilience and milestone compliance (FL)")+'</div>'
++'<div class="card"><div style="font-size:11px;font-weight:600;color:'+O+';margin-bottom:4px">$150B+ damage</div><div style="font-size:14px;font-weight:600;color:'+W+';margin-bottom:12px;line-height:1.4">California rebuild and wildfire recovery</div>'+li(O,"Largest residential rebuild in CA history")+li(O,"Design-build fixed-price program active now")+li(O,"Palisades, Malibu, Altadena licensed and marketing")+li(O,"$150M acquisition fund forming")+li(O,"Media platform drives inbound leads 24/7")+'</div>'
++'<div class="card"><div style="font-size:11px;font-weight:600;color:'+B+';margin-bottom:4px">500K+ unit deficit</div><div style="font-size:14px;font-weight:600;color:'+W+';margin-bottom:12px;line-height:1.4">LA multifamily and housing crisis</div>'+li(B,"Active bids: 85-unit Pico, 71-unit Hollywood, 147-unit")+li(B,"Type III and V expertise plus podium capabilities")+li(B,"$15M to $40M+ revenue at 8 to 15% GC margin")+li(B,"Bonding expansion unlocks larger contracts")+li(B,"Trusted developer partner in constrained market")+'</div>'
++'<div class="card"><div style="font-size:11px;font-weight:600;color:'+R+';margin-bottom:4px">Fastest-growing states</div><div style="font-size:14px;font-weight:600;color:'+W+';margin-bottom:12px;line-height:1.4">Florida and Arizona expansion</div>'+li(R,"Licensed FL and AZ as of 2025")+li(R,"Miami and Scottsdale active markets")+li(R,"Less competition than California")+li(R,"Higher margin opportunity")+li(R,"Hurricane resilience and milestone compliance (FL)")+'</div>'
 +'</div>'
 +'<div class="g3">'
 +'<div class="metric"><div style="font-size:26px;font-weight:700;color:'+G+';letter-spacing:-1px">$2.1T</div><div style="font-size:12px;color:'+W+';margin-top:6px;font-weight:500">US construction market</div></div>'
@@ -183,27 +176,21 @@ function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div class="metric"><div style="font-size:26px;font-weight:700;color:'+B+';letter-spacing:-1px">500K+</div><div style="font-size:12px;color:'+W+';margin-top:6px;font-weight:500">LA housing unit deficit</div></div>'
 +'</div></div>';},
 
-// 5 FLYWHEEL
 function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
-+'<div><div class="lbl">The Flywheel</div><div class="ttl">Two Engines. One Team. Zero Competition.</div>'
-+'<div class="sub">Construction wins fund media. Media generates leads. Leads become contracts. Contracts fund everything.</div></div>'
++'<div><div class="lbl">The Flywheel</div><div class="ttl">Two Engines. One Team. Zero Competition.</div><div class="sub">Construction wins fund media. Media generates leads. Leads become contracts. Contracts fund everything.</div></div>'
 +'<div class="g2" style="gap:16px">'
-+'<div class="card" style="border-color:rgba(212,168,67,0.2)">'
-+'<div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">FB Corp · Construction Engine</div>'
++'<div class="card" style="border-color:rgba(212,168,67,0.2)"><div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">FB Corp · Construction Engine</div>'
 +dotrow(G,"Licensed GC · CA AZ FL","$15M to $40M active bids · self-performing trades")
 +dotrow(B,"Active Pipeline","85-unit Pico · 71-unit Hollywood · 147-unit multifamily")
 +dotrow(O,"Fire Rebuild Program","Design-build · fixed price · Palisades, Malibu, Altadena")
 +dotrow(R,"Bonding Expansion","Unlock $10M to $50M contracts · every $1 bonding equals $5 to $10 contract value")
-+dotrow("#C97FD4","AZ and FL Activation","Licensed · teams forming · higher margin than CA")
-+'</div>'
-+'<div class="card" style="border-color:rgba(59,158,255,0.15)">'
-+'<div style="font-size:10px;color:'+B+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">FBC Media · Content Engine</div>'
++dotrow("#C97FD4","AZ and FL Activation","Licensed · teams forming · higher margin than CA")+'</div>'
++'<div class="card" style="border-color:rgba(59,158,255,0.15)"><div style="font-size:10px;color:'+B+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">FBC Media · Content Engine</div>'
 +dotrow(G,"Drew Code HQ · Flagship Show","Premier construction business podcast · deal and investor inflow 24/7")
 +dotrow(O,"Inside Altadena · Documentary","Full production · Altadena rebuild series · PBS, Netflix, streaming")
 +dotrow(R,"Skool Community Platform","Builders, devs, entrepreneurs · YPO meets job site · recurring revenue")
-+dotrow(B,"YouTube Channel","Construction and business content · 1.1M+ views per quarter · inbound leads")
-+dotrow("#C97FD4","Content Team · Full Operation","Editors, producers, social managers · on camera and on site")
-+'</div></div>'
++dotrow(B,"YouTube Channel","1.1M+ views per quarter · inbound leads · construction and business content")
++dotrow("#C97FD4","Content Team · Full Operation","Editors, producers, social managers · on camera and on site")+'</div></div>'
 +'<div class="g4">'
 +'<div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;text-align:center"><div style="font-size:12px;font-weight:600;color:'+G+'">Construction wins</div><div style="font-size:11px;color:'+M+';margin-top:4px">fuel content production</div></div>'
 +'<div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;text-align:center"><div style="font-size:12px;font-weight:600;color:'+B+'">Content generates</div><div style="font-size:11px;color:'+M+';margin-top:4px">leads and investor flow</div></div>'
@@ -211,69 +198,43 @@ function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px;text-align:center"><div style="font-size:12px;font-weight:600;color:'+R+'">Contracts fund</div><div style="font-size:11px;color:'+M+';margin-top:4px">the next build and season</div></div>'
 +'</div></div>';},
 
-// 6 INSIDE ALTADENA
 function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div><div class="lbl">Flagship Media Asset</div><div class="ttl">Inside Altadena — The Show That IS the Business</div></div>'
 +'<div class="g2" style="gap:16px">'
 +'<div style="display:flex;flex-direction:column;gap:12px">'
-+'<div class="card" style="border-color:rgba(255,107,74,0.2)">'
-+'<div style="font-size:10px;color:'+O+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">The concept</div>'
-+'<div style="font-size:14px;color:'+W+';font-weight:500;margin-bottom:10px;line-height:1.5;font-style:italic">"The first unscripted documentary series following the ground-up rebuild of homes destroyed in the 2025 LA fires."</div>'
-+'<div style="font-size:12px;color:'+M+';line-height:1.75">Real families. Real construction timelines. Real stakes. Produced by FBC Media featuring FB Corp\'s own Altadena builds as the primary storyline. The construction IS the content.</div>'
-+'</div>'
-+'<div class="card"><div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Distribution strategy</div>'
-+li(O,"YouTube (free) — top of funnel · audience building · ad revenue")
-+li(O,"Streaming pitch — Netflix · Hulu · Max · Apple TV+")
-+li(O,"Network syndication — PBS · HGTV · Discovery · NBC Local")
-+li(O,"Press and editorial — LA Times · Deadline · Variety · national pickup")+'</div>'
-+'<div style="background:rgba(212,168,67,0.05);border:0.5px solid rgba(212,168,67,0.2);border-radius:12px;padding:12px 16px">'
-+'<div style="font-size:12px;color:'+G+';font-weight:500;margin-bottom:4px">The Magnolia comp</div>'
-+'<div style="font-size:12px;color:'+M+';line-height:1.65">Fixer Upper generated est. $30M+ in brand equity before Chip and Joanna owned a network. We skip straight to owning both the builds and the broadcast.</div></div>'
++'<div class="card" style="border-color:rgba(255,107,74,0.2)"><div style="font-size:10px;color:'+O+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">The concept</div><div style="font-size:14px;color:'+W+';font-weight:500;margin-bottom:10px;line-height:1.5;font-style:italic">"The first unscripted documentary series following the ground-up rebuild of homes destroyed in the 2025 LA fires."</div><div style="font-size:12px;color:'+M+';line-height:1.75">Real families. Real construction timelines. Real stakes. Produced by FBC Media featuring FB Corp\'s own Altadena builds as the primary storyline. The construction IS the content.</div></div>'
++'<div class="card"><div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Distribution strategy</div>'+li(O,"YouTube (free) — top of funnel · audience building · ad revenue")+li(O,"Streaming pitch — Netflix · Hulu · Max · Apple TV+")+li(O,"Network syndication — PBS · HGTV · Discovery · NBC Local")+li(O,"Press and editorial — LA Times · Deadline · Variety · national pickup")+'</div>'
++'<div style="background:rgba(212,168,67,0.05);border:0.5px solid rgba(212,168,67,0.2);border-radius:12px;padding:12px 16px"><div style="font-size:12px;color:'+G+';font-weight:500;margin-bottom:4px">The Magnolia comp</div><div style="font-size:12px;color:'+M+';line-height:1.65">Fixer Upper generated est. $30M+ in brand equity before Chip and Joanna owned a network. We skip straight to owning both the builds and the broadcast.</div></div>'
 +'</div>'
 +'<div style="display:flex;flex-direction:column;gap:12px">'
-+'<div class="card"><div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Revenue the show generates directly</div>'
-+li(G,"YouTube AdSense and sponsorships")+li(G,"Streaming licensing deal")+li(G,"Brand partnerships: materials, tools, finance")+li(G,"Live events tied to build completions")+li(G,"Skool community upsell from viewers")+'</div>'
-+'<div class="card"><div style="font-size:10px;color:'+B+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Revenue the show generates for construction</div>'
-+li(B,"Inbound buyer leads from viewer base")+li(B,"Premium sale price on media-branded builds")+li(B,"Trade sponsorships and material partnerships")+li(B,"Contractor and talent recruitment pipeline")+li(B,"Investor conversations direct to the team")+'</div>'
++'<div class="card"><div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Revenue the show generates directly</div>'+li(G,"YouTube AdSense and sponsorships")+li(G,"Streaming licensing deal")+li(G,"Brand partnerships: materials, tools, finance")+li(G,"Live events tied to build completions")+li(G,"Skool community upsell from viewers")+'</div>'
++'<div class="card"><div style="font-size:10px;color:'+B+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px">Revenue the show generates for construction</div>'+li(B,"Inbound buyer leads from viewer base")+li(B,"Premium sale price on media-branded builds")+li(B,"Trade sponsorships and material partnerships")+li(B,"Contractor and talent recruitment pipeline")+li(B,"Investor conversations direct to the team")+'</div>'
 +'</div></div></div>';},
 
-// 7 USE OF FUNDS
 function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
-+'<div><div class="lbl">Use of Funds</div><div class="ttl">Where the $5,000,000 Goes</div>'
-+'<div class="sub">Two machines. Built to run forever. $4M is asset-backed construction capital. $1M is the media engine that amplifies every dollar of it.</div></div>'
++'<div><div class="lbl">Use of Funds</div><div class="ttl">Where the $5,000,000 Goes</div><div class="sub">Two machines. Built to run forever. $4M is asset-backed construction capital. $1M is the media engine that amplifies every dollar of it.</div></div>'
 +'<div class="g2" style="gap:16px">'
-+'<div class="card" style="border-color:rgba(212,168,67,0.25)">'
-+'<div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">FB Corp · Construction Engine</div>'
++'<div class="card" style="border-color:rgba(212,168,67,0.25)"><div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">FB Corp · Construction Engine</div>'
 +'<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:8px"><div style="font-size:28px;font-weight:700;color:'+G+';letter-spacing:-1px">$4,000,000</div><div style="font-size:28px;font-weight:700;color:'+G+';opacity:.45;letter-spacing:-1px">80%</div></div>'
 +'<div class="bar"><div style="width:80%;height:3px;background:'+G+';border-radius:2px"></div></div>'
 +'<div style="border-left:2px solid rgba(212,168,67,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+G+';margin-bottom:3px">32% · $1.6M — Surety Bonding</div><div style="font-size:12px;color:'+M+';line-height:1.6">Unlocks $10M to $50M multifamily contracts. Every $1 of bonding equals $5 to $10 in contract value.</div></div>'
 +'<div style="border-left:2px solid rgba(59,158,255,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+B+';margin-bottom:3px">24% · $1.2M — Active Pipeline</div><div style="font-size:12px;color:'+M+';line-height:1.6">Mobilize 85-unit Pico Blvd, 71-unit Hollywood, and 147-unit multifamily bids.</div></div>'
 +'<div style="border-left:2px solid rgba(255,107,74,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+O+';margin-bottom:3px">20% · $1.0M — Lot Acquisition</div><div style="font-size:12px;color:'+M+';line-height:1.6">Purchase Altadena rebuild lots and execute ground-up construction on first project.</div></div>'
-+'<div style="border-left:2px solid rgba(52,199,123,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+R+';margin-bottom:3px">4% · $0.2M — AZ and FL Activation</div><div style="font-size:12px;color:'+M+';line-height:1.6">Licensed, teams forming, less competition, higher margin than CA.</div></div>'
-+'</div>'
-+'<div class="card" style="border-color:rgba(59,158,255,0.15)">'
-+'<div style="font-size:10px;color:'+B+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">FBC Media · Content Engine</div>'
++'<div style="border-left:2px solid rgba(52,199,123,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+R+';margin-bottom:3px">4% · $0.2M — AZ and FL Activation</div><div style="font-size:12px;color:'+M+';line-height:1.6">Licensed, teams forming, less competition, higher margin than CA.</div></div></div>'
++'<div class="card" style="border-color:rgba(59,158,255,0.15)"><div style="font-size:10px;color:'+B+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">FBC Media · Content Engine</div>'
 +'<div style="display:flex;align-items:baseline;gap:16px;margin-bottom:8px"><div style="font-size:28px;font-weight:700;color:'+B+';letter-spacing:-1px">$1,000,000</div><div style="font-size:28px;font-weight:700;color:'+B+';opacity:.45;letter-spacing:-1px">20%</div></div>'
 +'<div class="bar"><div style="width:20%;height:3px;background:'+B+';border-radius:2px"></div></div>'
 +'<div style="border-left:2px solid rgba(255,107,74,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+O+';margin-bottom:3px">$350K — Inside Altadena</div><div style="font-size:12px;color:'+M+';line-height:1.6">Full TV documentary production. Pilot and first season. Crew, director, equipment, post-production.</div></div>'
 +'<div style="border-left:2px solid rgba(212,168,67,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+G+';margin-bottom:3px">$250K — Drew Code HQ</div><div style="font-size:12px;color:'+M+';line-height:1.6">Studio upgrade. Premier construction business podcast with better studio and bigger inbound.</div></div>'
 +'<div style="border-left:2px solid rgba(52,199,123,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+R+';margin-bottom:3px">$250K — YouTube Channel</div><div style="font-size:12px;color:'+M+';line-height:1.6">50+ episodes. Full content team including editors, producers, and social managers.</div></div>'
-+'<div style="border-left:2px solid rgba(59,158,255,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+B+';margin-bottom:3px">$150K — Skool Community</div><div style="font-size:12px;color:'+M+';line-height:1.6">Platform development, member acquisition, and content systems. YPO meets job site.</div></div>'
-+'</div></div>'
-+'<div style="background:rgba(52,199,123,0.05);border:0.5px solid rgba(52,199,123,0.2);border-radius:12px;padding:12px 18px;font-size:13px;color:rgba(52,199,123,0.85)"><strong style="color:'+R+'">Why this ratio works:</strong> The $4M construction capital is asset-backed and converts into real property with recoverable value. The $1M media investment amplifies that asset\'s sale price, generates inbound deal flow, and builds a brand moat that compounds permanently.</div>'
-+'</div>';},
++'<div style="border-left:2px solid rgba(59,158,255,0.4);padding-left:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:600;color:'+B+';margin-bottom:3px">$150K — Skool Community</div><div style="font-size:12px;color:'+M+';line-height:1.6">Platform development, member acquisition, and content systems. YPO meets job site.</div></div></div></div>'
++'<div style="background:rgba(52,199,123,0.05);border:0.5px solid rgba(52,199,123,0.2);border-radius:12px;padding:12px 18px;font-size:13px;color:rgba(52,199,123,0.85)"><strong style="color:'+R+'">Why this ratio works:</strong> The $4M construction capital is asset-backed and converts into real property with recoverable value. The $1M media investment amplifies that asset\'s sale price, generates inbound deal flow, and builds a brand moat that compounds permanently.</div></div>';},
 
-// 8 THE TEAM
 function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div><div class="lbl">The Team</div><div class="ttl">When You Write a $5M Check This Is Who You Are Backing</div></div>'
 +'<div class="g2" style="gap:16px">'
 +'<div style="display:flex;flex-direction:column;gap:12px">'
-+'<div class="card" style="border-color:rgba(212,168,67,0.2)">'
-+'<div style="font-size:22px;font-weight:700;color:'+W+';margin-bottom:4px">The FB Corp Team.</div>'
-+'<div style="font-size:12px;color:'+G+';margin-bottom:14px">Construction · Media · Capital · Beverly Hills, CA</div>'
-+'<div style="font-size:13px;color:'+M+';line-height:1.8;margin-bottom:14px">A family-built company with 45+ years of combined experience, $8B+ in institutional construction pedigree, and a media platform that generates inbound deal flow around the clock. FB Corp is not a one-man show. It is a complete operating team with deep field execution, financial leadership, and a brand engine that compounds permanently.</div>'
-+'<div style="font-size:13px;color:'+W+';font-weight:500;font-style:italic;border-left:2px solid rgba(212,168,67,0.5);padding-left:14px;line-height:1.7">"$5 million does not just fund a company — it unlocks a category."</div>'
-+'</div>'
++'<div class="card" style="border-color:rgba(212,168,67,0.2)"><div style="font-size:22px;font-weight:700;color:'+W+';margin-bottom:4px">The FB Corp Team.</div><div style="font-size:12px;color:'+G+';margin-bottom:14px">Construction · Media · Capital · Beverly Hills, CA</div><div style="font-size:13px;color:'+M+';line-height:1.8;margin-bottom:14px">A family-built company with 45+ years of combined experience, $8B+ in institutional construction pedigree, and a media platform that generates inbound deal flow around the clock. FB Corp is not a one-man show. It is a complete operating team with deep field execution, financial leadership, and a brand engine that compounds permanently.</div><div style="font-size:13px;color:'+W+';font-weight:500;font-style:italic;border-left:2px solid rgba(212,168,67,0.5);padding-left:14px;line-height:1.7">"$5 million does not just fund a company — it unlocks a category."</div></div>'
 +'<div class="g2" style="gap:8px">'
 +'<div style="background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px"><div style="font-size:13px;font-weight:600;color:'+G+'">Andrew Robles</div><div style="font-size:11px;color:'+M+';margin-top:4px;line-height:1.5">CEO · MBA Pepperdine · Media and Operations</div></div>'
 +'<div style="background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px"><div style="font-size:13px;font-weight:600;color:'+G+'">George Robles</div><div style="font-size:11px;color:'+M+';margin-top:4px;line-height:1.5">$8B+ Tishman · 35 Yrs Field Experience</div></div>'
@@ -284,11 +245,10 @@ function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:2px">Proof of execution</div>'
 +img("villa.jpg",120)
 +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+img("building1.jpg",110)+img("building2.jpg",110)+'</div>'
-+'<div class="card" style="padding:12px 16px"><div style="font-size:12px;font-weight:600;color:'+O+';margin-bottom:4px">Fire rebuild program</div><div style="font-size:12px;color:'+M+';line-height:1.6">Design-build 2025. Architecture, engineering, construction, permitting under one roof at fixed price. Active in Palisades, Malibu, Altadena.</div></div>'
++'<div class="card" style="padding:12px 16px"><div style="font-size:12px;font-weight:600;color:'+O+';margin-bottom:4px">$15M to $40M+ pipeline</div><div style="font-size:12px;color:'+M+';line-height:1.6">Active bids: 85-unit Pico Blvd, 71-unit Hollywood, 147-unit multifamily. Plus 15 San Sebastian Newport Beach.</div></div>'
 +'<div class="card" style="padding:12px 16px"><div style="font-size:12px;font-weight:600;color:'+G+';margin-bottom:4px">1.1M+ views per quarter</div><div style="font-size:12px;color:'+M+';line-height:1.6">YouTube and Instagram generating inbound construction leads, developer relationships, and investor conversations 24/7.</div></div>'
 +'</div></div></div>';},
 
-// 9 RISK
 function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div><div class="lbl">Risk Factors and Mitigants</div><div class="ttl">Transparent Assessment</div></div>'
 +'<div class="g2">'
@@ -300,11 +260,8 @@ function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'<div class="card" style="padding:16px 18px"><div style="font-size:10px;color:'+M+';font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">Risk: Media revenue uncertainty</div><div style="font-size:12px;color:'+M+';line-height:1.7"><span style="color:'+R+';font-weight:600">Mitigant:</span> Media is treated as a lead generation and brand asset, not a primary revenue line. Any media revenue is upside. Downside: zero media revenue. Upside: a standalone revenue stream worth multiples of the infrastructure investment.</div></div>'
 +'</div></div>';},
 
-// 10 THE ASK
 function(){return '<div style="display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">'
-+'<div><div class="lbl" style="text-align:center">The Investment Opportunity</div>'
-+'<div style="font-size:48px;font-weight:700;color:'+G+';letter-spacing:-2px">$5,000,000</div>'
-+'<div style="font-size:13px;color:'+G+';letter-spacing:2px;margin-top:6px">Equity · Revenue Share · Preferred Note · Convertible</div></div>'
++'<div><div class="lbl" style="text-align:center">The Investment Opportunity</div><div style="font-size:48px;font-weight:700;color:'+G+';letter-spacing:-2px">$5,000,000</div><div style="font-size:13px;color:'+G+';letter-spacing:2px;margin-top:6px">Equity · Revenue Share · Preferred Note · Convertible</div></div>'
 +'<div style="width:48px;height:1px;background:linear-gradient(90deg,transparent,'+G+',transparent)"></div>'
 +'<div style="font-size:14px;color:'+M+';max-width:600px;line-height:1.85">One of the leading construction companies in the United States with a full media operation built alongside it. The construction business is real. The media business is real. The market timing is real. <span style="color:'+W+';font-weight:500">This raise does not create the company. The company already exists. This capital makes it unstoppable.</span></div>'
 +'<div class="g2" style="width:100%;max-width:680px;text-align:left">'
@@ -315,19 +272,14 @@ function(){return '<div style="display:flex;flex-direction:column;align-items:ce
 +'</div>'
 +'<div style="width:100%;max-width:680px;background:rgba(212,168,67,0.05);border:0.5px solid rgba(212,168,67,0.3);border-radius:14px;padding:22px 26px;text-align:left">'
 +'<div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px">Recommended Structure</div>'
-+'<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px">'
-+'<div style="background:rgba(212,168,67,0.12);border:0.5px solid rgba(212,168,67,0.4);border-radius:8px;padding:6px 14px;font-size:12px;color:'+G+';font-weight:600;white-space:nowrap">Preferred Note</div>'
-+'<div style="font-size:13px;color:'+W+';line-height:1.7">$5M at <strong style="color:'+G+'">8 to 10% annual interest</strong>, 18 to 24 month maturity, with an equity conversion option at a <strong style="color:'+G+'">20% discount</strong> to the next round valuation. The team retains control. Investors get downside protection backed by real construction assets. Equity is priced later when the company is worth significantly more.</div>'
-+'</div>'
++'<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px"><div style="background:rgba(212,168,67,0.12);border:0.5px solid rgba(212,168,67,0.4);border-radius:8px;padding:6px 14px;font-size:12px;color:'+G+';font-weight:600;white-space:nowrap">Preferred Note</div><div style="font-size:13px;color:'+W+';line-height:1.7">$5M at <strong style="color:'+G+'">8 to 10% annual interest</strong>, 18 to 24 month maturity, with an equity conversion option at a <strong style="color:'+G+'">20% discount</strong> to the next round valuation. The team retains control. Investors get downside protection backed by real construction assets.</div></div>'
 +'<div style="border-top:0.5px solid rgba(255,255,255,0.07);padding-top:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'
 +'<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px"><div style="font-size:10px;color:'+M+';margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">If equity only</div><div style="font-size:13px;font-weight:600;color:'+G+';margin-bottom:6px">15 to 18% for $5M</div><div style="font-size:11px;color:'+M+';line-height:1.6">Implies $27M to $33M pre-money valuation. Supportable given pipeline, 3-state licenses, and media reach.</div></div>'
 +'<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px"><div style="font-size:10px;color:'+M+';margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Revenue share alt</div><div style="font-size:13px;font-weight:600;color:'+G+';margin-bottom:6px">3 to 6% of gross rev</div><div style="font-size:11px;color:'+M+';line-height:1.6">Until investors receive 1.5 to 2x back. Works for investors seeking current income over equity.</div></div>'
 +'<div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px"><div style="font-size:10px;color:'+M+';margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Why not straight equity now</div><div style="font-size:13px;font-weight:600;color:'+G+';margin-bottom:6px">Undervalues the co.</div><div style="font-size:11px;color:'+M+';line-height:1.6">$4M goes into real property. Altadena builds, show airing, and pipeline converting all equal far higher value at next round.</div></div>'
 +'</div></div>'
-+'<div style="padding:14px 32px;border:0.5px solid rgba(212,168,67,0.4);border-radius:10px;background:rgba(212,168,67,0.05)">'
-+'<div style="font-size:18px;font-weight:700;color:'+G+';letter-spacing:-.5px">310.499.8716</div>'
-+'<div style="font-size:12px;color:'+M+';margin-top:4px">DREW@FBCORP.COM · fbcorp.com · Beverly Hills, CA</div>'
-+'</div></div>';}
++'<div style="padding:14px 32px;border:0.5px solid rgba(212,168,67,0.4);border-radius:10px;background:rgba(212,168,67,0.05)"><div style="font-size:18px;font-weight:700;color:'+G+';letter-spacing:-.5px">310.499.8716</div><div style="font-size:12px;color:'+M+';margin-top:4px">DREW@FBCORP.COM · fbcorp.com · Beverly Hills, CA</div></div>'
++'</div>';}
 
 ];
 
