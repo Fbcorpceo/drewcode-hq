@@ -1345,8 +1345,8 @@ function showBoard() {
   const ownerSelect = document.getElementById('f-owner');
   if (ownerSelect) ownerSelect.value = currentUser;
 
-  // Re-render tasks in case they loaded before login screen was dismissed
-  renderAll();
+  // Always reload tasks fresh from Supabase after login
+  loadTasks();
 }
 
 function logout() {
@@ -1386,12 +1386,6 @@ function logout() {
   });
 });
 
-// Restore session if already logged in
-(function() {
-  const saved = sessionStorage.getItem('fbcorp-user');
-  if (saved) { currentUser = saved; showBoard(); }
-})();
-
 // Light mode — swap login logo
 function syncLoginLogo() {
   const isLight = document.documentElement.classList.contains('light');
@@ -1400,7 +1394,13 @@ function syncLoginLogo() {
 }
 
 // ── Boot ──
-loadTasks();
+// loadTasks is called by showBoard() after login — don't pre-load here
+// Only restore session if one exists; otherwise user must log in first
+const _savedUser = sessionStorage.getItem('fbcorp-user');
+if (_savedUser) {
+  currentUser = _savedUser;
+  showBoard(); // showBoard calls loadTasks() + subscribeRealtime()
+}
 subscribeRealtime();
 
 </script>
