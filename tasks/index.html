@@ -460,9 +460,7 @@
   .pi-low      { border-left-color: #34c48b !important; }
   .pi-none     { border-left-color: #3a3a44 !important; }
 
-  /* ── Mobile touch improvements ── */
-  @media (max-width: 768px) {
-    .board { padding: 12px; gap: 12px; }
+  
     .topbar { padding: 0 14px; gap: 8px; }
     .topbar-logo { height: 22px; }
     .search-input { width: 130px; font-size: 12px; }
@@ -472,6 +470,25 @@
     .column { flex: 0 0 260px; }
     .card { touch-action: none; cursor: grab; }
   }
+
+
+  /* ── Mobile ── */
+  @media (max-width: 768px) {
+    .board { padding: 12px; gap: 12px; }
+    .topbar { padding: 0 14px; gap: 8px; flex-wrap: wrap; height: auto; min-height: 58px; }
+    .topbar-logo { height: 20px; }
+    .search-input { width: 120px; font-size: 12px; }
+    .search-input:focus { width: 140px; }
+    .filter-select { min-width: 100px; font-size: 12px; padding: 6px 28px 6px 10px; }
+    .task-total { display: none; }
+    .column { flex: 0 0 260px; }
+  }
+
+  /* ghost card inherits card styles */
+  #touch-ghost { cursor: grabbing !important; }
+
+  /* disable native scroll on board while dragging */
+  body.is-dragging { overflow: hidden; }
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -803,10 +820,6 @@ function renderAll() {
           document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
         });
 
-        // ── Touch drag ──
-        card.addEventListener('touchstart', handleTouchStart, { passive: true });
-        card.addEventListener('touchmove',  handleTouchMove,  { passive: false });
-        card.addEventListener('touchend',   handleTouchEnd,   { passive: true });
 
         area.appendChild(card);
       });
@@ -948,86 +961,146 @@ function toggleTheme() {
 })();
 
 
-// ── Touch drag-and-drop ──
-let touchDragId = null;
-let touchClone  = null;
-let touchOffsetX = 0;
-let touchOffsetY = 0;
 
-function handleTouchStart(e) {
-  const card = e.currentTarget;
-  const touch = e.touches[0];
-  const rect = card.getBoundingClientRect();
 
-  touchDragId  = card.dataset.id;
-  touchOffsetX = touch.clientX - rect.left;
-  touchOffsetY = touch.clientY - rect.top;
 
-  // Create floating clone
-  touchClone = card.cloneNode(true);
-  touchClone.style.cssText = `
-    position: fixed;
-    top: ${rect.top}px;
-    left: ${rect.left}px;
-    width: ${rect.width}px;
-    opacity: 0.85;
-    pointer-events: none;
-    z-index: 9999;
-    transform: scale(1.04) rotate(1.5deg);
-    transition: transform 0.1s ease;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-  `;
-  document.body.appendChild(touchClone);
-  card.classList.add('dragging');
-}
+// ══════════════════════════════════════
+// TOUCH DRAG AND DROP
+// ══════════════════════════════════════
+(function() {
+  let dragTaskId   = null;
+  let ghost        = null;
+  let startX       = 0;
+  let startY       = 0;
+  let offsetX      = 0;
+  let offsetY      = 0;
+  let lastTarget   = null;
+  let moved        = false;
 
-function handleTouchMove(e) {
-  e.preventDefault();
-  if (!touchClone) return;
-  const touch = e.touches[0];
+  function getCardEl(el) {
+    while (el && !el.classList.contains('card')) el = el.parentElement;
+    return el;
+  }
 
-  touchClone.style.left = (touch.clientX - touchOffsetX) + 'px';
-  touchClone.style.top  = (touch.clientY - touchOffsetY) + 'px';
+  function getAreaEl(el) {
+    while (el && !el.classList.contains('cards-area')) el = el.parentElement;
+    return el;
+  }
 
-  // Highlight drop target
-  touchClone.style.display = 'none';
-  const el = document.elementFromPoint(touch.clientX, touch.clientY);
-  touchClone.style.display = '';
+  function createGhost(card) {
+    const rect = card.getBoundingClientRect();
+    const g = card.cloneNode(true);
+    g.id = 'touch-ghost';
+    g.style.cssText = [
+      'position:fixed',
+      'pointer-events:none',
+      'z-index:9999',
+      'width:'  + rect.width  + 'px',
+      'top:'    + rect.top    + 'px',
+      'left:'   + rect.left   + 'px',
+      'opacity:0.9',
+      'transform:scale(1.05) rotate(2deg)',
+      'box-shadow:0 16px 40px rgba(0,0,0,0.45)',
+      'transition:transform 0.1s',
+      'border-radius:10px',
+    ].join(';');
+    document.body.appendChild(g);
+    return g;
+  }
 
-  document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
-  const targetArea = el ? el.closest('.cards-area') : null;
-  if (targetArea) targetArea.classList.add('drag-over');
-}
+  function clearHighlights() {
+    document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
+  }
 
-async function handleTouchEnd(e) {
-  if (!touchClone || !touchDragId) return;
+  document.addEventListener('touchstart', function(e) {
+    const card = getCardEl(e.target);
+    // ignore taps on the edit button
+    if (!card || e.target.classList.contains('edit-btn')) return;
 
-  const touch = e.changedTouches[0];
+    const touch = e.touches[0];
+    const rect  = card.getBoundingClientRect();
 
-  // Remove clone
-  touchClone.style.display = 'none';
-  const el = document.elementFromPoint(touch.clientX, touch.clientY);
-  touchClone.remove();
-  touchClone = null;
+    dragTaskId = card.dataset.id;
+    startX     = touch.clientX;
+    startY     = touch.clientY;
+    offsetX    = touch.clientX - rect.left;
+    offsetY    = touch.clientY - rect.top;
+    moved      = false;
+    lastTarget = null;
 
-  // Remove dragging style
-  document.querySelectorAll('.card.dragging').forEach(c => c.classList.remove('dragging'));
-  document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
+    // slight delay so a quick tap still opens edit
+    ghost = null;
+    card._touchTimer = setTimeout(() => {
+      ghost = createGhost(card);
+      card.classList.add('dragging');
+    }, 180);
 
-  // Find drop target column
-  const targetArea = el ? el.closest('.cards-area') : null;
-  if (targetArea) {
-    const newCol = targetArea.dataset.col;
-    const t = tasks.find(t => String(t.id) === String(touchDragId));
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e) {
+    if (!dragTaskId) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+    if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+
+    moved = true;
+    e.preventDefault();
+
+    if (!ghost) return;
+
+    ghost.style.left = (touch.clientX - offsetX) + 'px';
+    ghost.style.top  = (touch.clientY - offsetY) + 'px';
+
+    // find drop target
+    ghost.style.display = 'none';
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    ghost.style.display = '';
+
+    clearHighlights();
+    const area = getAreaEl(el);
+    if (area) {
+      area.classList.add('drag-over');
+      lastTarget = area;
+    } else {
+      lastTarget = null;
+    }
+  }, { passive: false });
+
+  document.addEventListener('touchend', async function(e) {
+    if (!dragTaskId) return;
+
+    const id = dragTaskId;
+    dragTaskId = null;
+
+    // clear timer if tap (no movement)
+    const card = document.querySelector(`.card[data-id="${id}"]`);
+    if (card) {
+      clearTimeout(card._touchTimer);
+      card.classList.remove('dragging');
+    }
+
+    if (ghost) { ghost.remove(); ghost = null; }
+    clearHighlights();
+
+    if (!moved || !lastTarget) return;
+
+    const newCol = lastTarget.dataset.col;
+    const t = tasks.find(t => String(t.id) === String(id));
     if (t && t.col !== newCol) {
       t.col = newCol;
       renderAll();
       await dbUpdateCol(t.id, newCol);
     }
-  }
+  }, { passive: true });
 
-  touchDragId = null;
-}
+  document.addEventListener('touchcancel', function() {
+    dragTaskId = null;
+    if (ghost) { ghost.remove(); ghost = null; }
+    clearHighlights();
+    document.querySelectorAll('.card.dragging').forEach(c => c.classList.remove('dragging'));
+  }, { passive: true });
+})();
 
 // ── Boot ──
 loadTasks();
