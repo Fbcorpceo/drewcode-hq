@@ -77,9 +77,10 @@ function unlock(){
   }
 }
 
+var BASE="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/";
 function img(src,h,opts){
   var extra=opts||"";
-  return '<img src="'+src+'" style="width:100%;height:'+h+'px;object-fit:cover;border-radius:10px;'+extra+'" onerror="this.style.display=\'none\'"/>';
+  return '<img src="'+BASE+src+'" style="width:100%;height:'+h+'px;object-fit:cover;border-radius:10px;'+extra+'" onerror="this.style.display=\'none\'"/>';
 }
 function card(label,body,color){
   return '<div class="card"><div style="font-size:10px;color:'+(color||G)+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">'+label+'</div><div style="font-size:12px;color:'+M+';line-height:1.75">'+body+'</div></div>';
@@ -115,9 +116,9 @@ function(){return '<div style="display:flex;gap:32px;align-items:center;min-heig
 +'<div style="padding:9px 18px;border:0.5px solid rgba(212,168,67,0.4);border-radius:8px;font-size:11px;color:'+G+';letter-spacing:1.2px;text-transform:uppercase;background:rgba(212,168,67,0.05);display:inline-block">DREW@FBCORP.COM · 310.499.8716</div>'
 +'</div>'
 +'<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:8px">'
-+img("../villa.jpg",160,"grid-column:1/span 2;")
-+img("../building1.jpg",130)
-+img("../building2.jpg",130)
++img("villa.jpg",160,"grid-column:1/span 2;")
++img("building1.jpg",130)
++img("building2.jpg",130)
 +'</div></div>';},
 
 // 2 EXEC SUMMARY
@@ -160,8 +161,8 @@ function(){return '<div style="display:flex;flex-direction:column;gap:14px">'
 +accent("Team and family legacy","The FB Corp team brings 45+ years of combined family experience. George Robles (35 yrs, $8B+ Tishman), David Robles (field ops, Burrell), El Rady (CFO, capital strategy), and Andrew Robles (MBA Pepperdine, CEO) lead a dynasty scaling nationally.",B)
 +'</div>'
 +'<div style="display:flex;flex-direction:column;gap:8px">'
-+img("../kitchen1.jpg",185)
-+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+img("../kitchen2.jpg",118)+img("../shower.jpg",118)+'</div>'
++img("kitchen1.jpg",185)
++'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+img("kitchen2.jpg",118)+img("shower.jpg",118)+'</div>'
 +'<div style="font-size:10px;color:'+M+';text-align:center;letter-spacing:1px;text-transform:uppercase;opacity:.6">FB Corp completed projects</div>'
 +'</div></div></div>';},
 
@@ -281,8 +282,8 @@ function(){return '<div style="display:flex;flex-direction:column;gap:16px">'
 +'</div></div>'
 +'<div style="display:flex;flex-direction:column;gap:8px">'
 +'<div style="font-size:10px;color:'+G+';font-weight:600;text-transform:uppercase;letter-spacing:2px;margin-bottom:2px">Proof of execution</div>'
-+img("../villa.jpg",120)
-+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+img("../building1.jpg",110)+img("../building2.jpg",110)+'</div>'
++img("villa.jpg",120)
++'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+img("building1.jpg",110)+img("building2.jpg",110)+'</div>'
 +'<div class="card" style="padding:12px 16px"><div style="font-size:12px;font-weight:600;color:'+O+';margin-bottom:4px">Fire rebuild program</div><div style="font-size:12px;color:'+M+';line-height:1.6">Design-build 2025. Architecture, engineering, construction, permitting under one roof at fixed price. Active in Palisades, Malibu, Altadena.</div></div>'
 +'<div class="card" style="padding:12px 16px"><div style="font-size:12px;font-weight:600;color:'+G+';margin-bottom:4px">1.1M+ views per quarter</div><div style="font-size:12px;color:'+M+';line-height:1.6">YouTube and Instagram generating inbound construction leads, developer relationships, and investor conversations 24/7.</div></div>'
 +'</div></div></div>';},
