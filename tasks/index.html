@@ -459,6 +459,20 @@
   .pi-medium   { border-left-color: #7c6dfa !important; }
   .pi-low      { border-left-color: #34c48b !important; }
   .pi-none     { border-left-color: #3a3a44 !important; }
+
+  /* ── Mobile touch improvements ── */
+  @media (max-width: 768px) {
+    .board { padding: 12px; gap: 12px; }
+    .topbar { padding: 0 14px; gap: 8px; }
+    .topbar-logo { height: 22px; }
+    .search-input { width: 130px; font-size: 12px; }
+    .search-input:focus { width: 150px; }
+    .filter-select { min-width: 110px; font-size: 12px; }
+    .task-total { display: none; }
+    .column { flex: 0 0 260px; }
+    .card { touch-action: none; cursor: grab; }
+  }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -788,6 +802,12 @@ function renderAll() {
           card.classList.remove('dragging');
           document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
         });
+
+        // ── Touch drag ──
+        card.addEventListener('touchstart', handleTouchStart, { passive: true });
+        card.addEventListener('touchmove',  handleTouchMove,  { passive: false });
+        card.addEventListener('touchend',   handleTouchEnd,   { passive: true });
+
         area.appendChild(card);
       });
     }
@@ -926,6 +946,88 @@ function toggleTheme() {
     document.getElementById('toggle-track').classList.add('on');
   }
 })();
+
+
+// ── Touch drag-and-drop ──
+let touchDragId = null;
+let touchClone  = null;
+let touchOffsetX = 0;
+let touchOffsetY = 0;
+
+function handleTouchStart(e) {
+  const card = e.currentTarget;
+  const touch = e.touches[0];
+  const rect = card.getBoundingClientRect();
+
+  touchDragId  = card.dataset.id;
+  touchOffsetX = touch.clientX - rect.left;
+  touchOffsetY = touch.clientY - rect.top;
+
+  // Create floating clone
+  touchClone = card.cloneNode(true);
+  touchClone.style.cssText = `
+    position: fixed;
+    top: ${rect.top}px;
+    left: ${rect.left}px;
+    width: ${rect.width}px;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 9999;
+    transform: scale(1.04) rotate(1.5deg);
+    transition: transform 0.1s ease;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  `;
+  document.body.appendChild(touchClone);
+  card.classList.add('dragging');
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (!touchClone) return;
+  const touch = e.touches[0];
+
+  touchClone.style.left = (touch.clientX - touchOffsetX) + 'px';
+  touchClone.style.top  = (touch.clientY - touchOffsetY) + 'px';
+
+  // Highlight drop target
+  touchClone.style.display = 'none';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  touchClone.style.display = '';
+
+  document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
+  const targetArea = el ? el.closest('.cards-area') : null;
+  if (targetArea) targetArea.classList.add('drag-over');
+}
+
+async function handleTouchEnd(e) {
+  if (!touchClone || !touchDragId) return;
+
+  const touch = e.changedTouches[0];
+
+  // Remove clone
+  touchClone.style.display = 'none';
+  const el = document.elementFromPoint(touch.clientX, touch.clientY);
+  touchClone.remove();
+  touchClone = null;
+
+  // Remove dragging style
+  document.querySelectorAll('.card.dragging').forEach(c => c.classList.remove('dragging'));
+  document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
+
+  // Find drop target column
+  const targetArea = el ? el.closest('.cards-area') : null;
+  if (targetArea) {
+    const newCol = targetArea.dataset.col;
+    const t = tasks.find(t => String(t.id) === String(touchDragId));
+    if (t && t.col !== newCol) {
+      t.col = newCol;
+      renderAll();
+      await dbUpdateCol(t.id, newCol);
+    }
+  }
+
+  touchDragId = null;
+}
 
 // ── Boot ──
 loadTasks();
