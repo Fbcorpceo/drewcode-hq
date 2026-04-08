@@ -332,6 +332,9 @@
   .due-soon { background: rgba(186,117,23,0.12); color: #e0a84a; border-color: rgba(186,117,23,0.2); }
   .due-late { background: rgba(226,75,74,0.12); color: #f07070; border-color: rgba(226,75,74,0.2); }
   .milestone-chip { color: #a89dfc; border-color: rgba(124,109,250,0.2); background: rgba(124,109,250,0.08); }
+  .link-chip { color: #6fb8ff; border-color: rgba(55,138,221,0.25); background: rgba(55,138,221,0.08); text-decoration: none; max-width: 100%; }
+  .link-chip:hover { background: rgba(55,138,221,0.16); color: #9bd0ff; }
+  .link-chip .link-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
 
   /* ── Modal ── */
   .modal-bg {
@@ -442,6 +445,8 @@
   :root.light .due-soon   { background: rgba(160,90,0,0.1);   color: #8a5200; border-color: rgba(160,90,0,0.2); }
   :root.light .due-late   { background: rgba(200,40,40,0.1);  color: #b02020; border-color: rgba(200,40,40,0.2); }
   :root.light .milestone-chip { color: #5244c9; border-color: rgba(107,92,245,0.22); background: rgba(107,92,245,0.08); }
+  :root.light .link-chip { color: #1c6bb8; border-color: rgba(28,107,184,0.25); background: rgba(28,107,184,0.08); }
+  :root.light .link-chip:hover { background: rgba(28,107,184,0.16); color: #14538f; }
   :root.light .cards-area.drag-over { background: rgba(107,92,245,0.06); }
 
   /* ── Loading bar ── */
@@ -759,6 +764,11 @@
     </div>
 
     <div class="field-group">
+      <label class="field-label" for="f-link">Link to your work</label>
+      <input class="field-input" type="url" id="f-link" placeholder="https://..." />
+    </div>
+
+    <div class="field-group">
       <label class="field-label">Card color</label>
       <div class="color-row" id="color-row"></div>
     </div>
@@ -833,6 +843,7 @@ async function loadTasks() {
       milestone: r.milestone || '',
       priority: r.priority || '',
       color: r.color || COLORS[0],
+      link: r.link || '',
       sort_order: r.sort_order || 0,
     }));
     showLoading(false);
@@ -847,7 +858,8 @@ async function loadTasks() {
 async function dbInsert(data) {
   const { data: row, error } = await sb.from('tasks').insert([{
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
-    due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color
+    due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
+    link: data.link || null
   }]).select().single();
   if (error) { console.error('Insert error:', error); return null; }
   return row;
@@ -856,7 +868,8 @@ async function dbInsert(data) {
 async function dbUpdate(id, data) {
   const { error } = await sb.from('tasks').update({
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
-    due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color
+    due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
+    link: data.link || null
   }).eq('id', id);
   if (error) console.error('Update error:', error);
 }
@@ -904,6 +917,7 @@ function rowToTask(r) {
     id: r.id, col: r.col, title: r.title, desc: r.description || '',
     owner: r.owner || '', due: r.due || '', milestone: r.milestone || '',
     priority: r.priority || '', color: r.color || COLORS[0],
+    link: r.link || '',
     sort_order: r.sort_order || 0,
   };
 }
@@ -973,6 +987,7 @@ function renderAll() {
             ${t.owner ? `<div class="chip"><div class="owner-av" style="background:${avBg}20;color:${avBg}">${initials(t.owner)}</div>${escHtml(t.owner)}</div>` : ''}
             ${ds ? `<div class="chip ${ds.cls}">⏱ ${ds.label}</div>` : ''}
             ${t.milestone ? `<div class="chip milestone-chip">◆ ${escHtml(t.milestone)}</div>` : ''}
+            ${t.link ? `<a class="chip link-chip" href="${escHtml(t.link)}" target="_blank" rel="noopener noreferrer" title="${escHtml(t.link)}" onclick="event.stopPropagation()" draggable="false">🔗 <span class="link-text">${escHtml(linkLabel(t.link))}</span></a>` : ''}
           </div>`;
 
         card.addEventListener('dragstart', e => {
@@ -1001,6 +1016,22 @@ function renderAll() {
 
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function linkLabel(url) {
+  try {
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./, '') + (u.pathname && u.pathname !== '/' ? u.pathname : '');
+  } catch (e) {
+    return url;
+  }
+}
+
+function normalizeLink(s) {
+  const v = (s || '').trim();
+  if (!v) return '';
+  if (/^https?:\/\//i.test(v)) return v;
+  return 'https://' + v;
 }
 
 document.querySelectorAll('.cards-area').forEach(area => {
@@ -1100,11 +1131,12 @@ function openModal(id, col) {
     document.getElementById('f-due').value        = t.due || '';
     document.getElementById('f-milestone').value  = t.milestone || '';
     document.getElementById('f-priority').value   = t.priority || '';
+    document.getElementById('f-link').value       = t.link || '';
     selectedColor = t.color || COLORS[0];
     document.getElementById('btn-delete').style.display = '';
   } else {
     document.getElementById('modal-title').textContent = 'New task';
-    ['f-title','f-desc','f-owner','f-due','f-milestone'].forEach(id => document.getElementById(id).value = '');
+    ['f-title','f-desc','f-owner','f-due','f-milestone','f-link'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('f-priority').value = '';
     selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
     document.getElementById('btn-delete').style.display = 'none';
@@ -1130,6 +1162,7 @@ async function saveTask() {
     milestone: document.getElementById('f-milestone').value.trim(),
     priority:  document.getElementById('f-priority').value,
     color:     selectedColor,
+    link:      normalizeLink(document.getElementById('f-link').value),
   };
   closeModal();
   if (editId) {
