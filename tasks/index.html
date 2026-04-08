@@ -855,13 +855,23 @@ async function loadTasks() {
   }
 }
 
+function formatSbError(prefix, error) {
+  return prefix + ': ' + (error.message || JSON.stringify(error)) +
+         (error.hint ? '\nHint: ' + error.hint : '') +
+         (error.code ? '\nCode: ' + error.code : '');
+}
+
 async function dbInsert(data) {
   const { data: row, error } = await sb.from('tasks').insert([{
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
     link: data.link || null
   }]).select().single();
-  if (error) { console.error('Insert error:', error); return null; }
+  if (error) {
+    console.error('Insert error:', error);
+    showLoadError(formatSbError('Supabase insert error', error));
+    return null;
+  }
   return row;
 }
 
@@ -871,7 +881,10 @@ async function dbUpdate(id, data) {
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
     link: data.link || null
   }).eq('id', id);
-  if (error) console.error('Update error:', error);
+  if (error) {
+    console.error('Update error:', error);
+    showLoadError(formatSbError('Supabase update error', error));
+  }
 }
 
 async function dbUpdateCol(id, col) {
