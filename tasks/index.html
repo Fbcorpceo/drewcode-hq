@@ -894,8 +894,6 @@ function showLoading(on) {
   document.getElementById('loading-bar').style.opacity = on ? '1' : '0';
 }
 
-// initials() defined in auth section above
-
 function getDueStatus(due) {
   if (!due) return null;
   const today = new Date(); today.setHours(0,0,0,0);
@@ -1305,7 +1303,10 @@ function toggleTheme() {
 const AV_PALETTE_LOGIN = ['#7c6dfa','#34c48b','#f48c44','#e05fa3','#378ADD','#e24b4a','#ba7517','#1D9E75'];
 let currentUser = null;
 
-// initials() defined in auth section above
+function initials(name) {
+  if (!name) return '';
+  return name.trim().split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase();
+}
 
 function userColor(name) {
   const members = ['Adam','Drew','David','Erickka','George','Lulu','Kourk','Monica','Ashleigh','Ellada','Mike','Ray'];
