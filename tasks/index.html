@@ -636,6 +636,7 @@
 </header>
 
 <!-- Board -->
+<div id="load-error" style="display:none;margin:12px 20px;padding:12px 16px;background:#3a1d1d;border:1px solid #e24b4a;border-radius:8px;color:#ffb8b8;font-size:13px;font-family:var(--mono);white-space:pre-wrap;word-break:break-word;"></div>
 <div id="drop-indicator" style="display:none;height:3px;background:var(--accent);border-radius:99px;margin:2px 0;pointer-events:none;"></div>
 <div class="board" id="board">
   <div class="column col-todo" id="col-todo">
@@ -782,23 +783,46 @@ let editId = null, editCol = null, selectedColor = COLORS[0], dragId = null;
 let filterOwner = '', filterPriority = '';
 
 // ── Supabase helpers ──
+function showLoadError(msg) {
+  const el = document.getElementById('load-error');
+  if (!el) return;
+  if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
 async function loadTasks() {
   showLoading(true);
-  const { data, error } = await sb.from('tasks').select('*').order('created_at', { ascending: true });
-  if (error) { console.error('Load error:', error); showLoading(false); return; }
-  tasks = (data || []).map(r => ({
-    id: r.id,
-    col: r.col,
-    title: r.title,
-    desc: r.description || '',
-    owner: r.owner || '',
-    due: r.due || '',
-    milestone: r.milestone || '',
-    priority: r.priority || '',
-    color: r.color || COLORS[0],
-  }));
-  showLoading(false);
-  renderAll();
+  showLoadError(null);
+  try {
+    const { data, error } = await sb.from('tasks').select('*').order('created_at', { ascending: true });
+    if (error) {
+      console.error('Load error:', error);
+      showLoadError('Supabase load error: ' + (error.message || JSON.stringify(error)) +
+                    (error.hint ? '\nHint: ' + error.hint : '') +
+                    (error.code ? '\nCode: ' + error.code : ''));
+      showLoading(false);
+      return;
+    }
+    tasks = (data || []).map(r => ({
+      id: r.id,
+      col: r.col,
+      title: r.title,
+      desc: r.description || '',
+      owner: r.owner || '',
+      due: r.due || '',
+      milestone: r.milestone || '',
+      priority: r.priority || '',
+      color: r.color || COLORS[0],
+      sort_order: r.sort_order || 0,
+    }));
+    showLoading(false);
+    renderAll();
+  } catch (e) {
+    console.error('Load exception:', e);
+    showLoadError('Supabase load exception: ' + (e && e.message ? e.message : String(e)));
+    showLoading(false);
+  }
 }
 
 async function dbInsert(data) {
@@ -1313,6 +1337,9 @@ function showBoard() {
   // Pre-select their name in the owner dropdown
   const ownerSelect = document.getElementById('f-owner');
   if (ownerSelect) ownerSelect.value = currentUser;
+
+  // Reload tasks fresh from Supabase whenever entering the board
+  loadTasks();
 }
 
 function logout() {
