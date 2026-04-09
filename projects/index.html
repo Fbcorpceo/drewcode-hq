@@ -899,8 +899,8 @@
 </div>
 
 <script>
-const SUPABASE_URL = 'https://zigjmgbfgqzhwgiliouw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppZ2ptZ2JmZ3F6aHdnaWxpb3V3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1OTU2MTIsImV4cCI6MjA5MTE3MTYxMn0.CWJUy4IYP5zfqzvkFBHhjH2zmlh-CalvXk7_1yIO0Mo';
+const SUPABASE_URL = 'https://zizritsghvfggyuflvrt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_g188nDsw_yDP1roGaJCFrg_iR3yOMRG';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const COLORS = [
@@ -941,7 +941,7 @@ async function loadTasks() {
   showLoading(true);
   showLoadError(null);
   try {
-    const { data, error } = await sb.from('projects').select('*').order('created_at', { ascending: true });
+    const { data, error } = await sb.from('tasks').select('*').order('created_at', { ascending: true });
     if (error) {
       console.error('Load error:', error);
       showLoadError('Supabase load error: ' + (error.message || JSON.stringify(error)) +
@@ -979,7 +979,7 @@ function formatSbError(prefix, error) {
 }
 
 async function dbInsert(data) {
-  const { data: row, error } = await sb.from('projects').insert([{
+  const { data: row, error } = await sb.from('tasks').insert([{
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
     link: data.link || null
@@ -993,7 +993,7 @@ async function dbInsert(data) {
 }
 
 async function dbUpdate(id, data) {
-  const { error } = await sb.from('projects').update({
+  const { error } = await sb.from('tasks').update({
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
     link: data.link || null
@@ -1005,26 +1005,26 @@ async function dbUpdate(id, data) {
 }
 
 async function dbUpdateCol(id, col) {
-  const { error } = await sb.from('projects').update({ col }).eq('id', id);
+  const { error } = await sb.from('tasks').update({ col }).eq('id', id);
   if (error) console.error('Col update error:', error);
 }
 
 async function dbUpdateOrder(updates) {
   // updates = [{id, sort_order}, ...]
   await Promise.all(updates.map(u =>
-    sb.from('projects').update({ sort_order: u.sort_order }).eq('id', u.id)
+    sb.from('tasks').update({ sort_order: u.sort_order }).eq('id', u.id)
   ));
 }
 
 async function dbDelete(id) {
-  const { error } = await sb.from('projects').delete().eq('id', id);
+  const { error } = await sb.from('tasks').delete().eq('id', id);
   if (error) console.error('Delete error:', error);
 }
 
 // ── Real-time subscription ──
 function subscribeRealtime() {
-  sb.channel('projects-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, payload => {
+  sb.channel('tasks-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, payload => {
       const { eventType, new: newRow, old: oldRow } = payload;
       if (eventType === 'INSERT') {
         if (!tasks.find(t => t.id === newRow.id)) {
@@ -1056,7 +1056,7 @@ function rowToTask(r) {
 let comments = [];
 
 async function loadComments() {
-  const { data, error } = await sb.from('project_comments').select('*').order('created_at', { ascending: true });
+  const { data, error } = await sb.from('comments').select('*').order('created_at', { ascending: true });
   if (error) {
     console.error('Comments load error:', error);
     showLoadError(formatSbError('Supabase comments load error', error));
@@ -1073,7 +1073,7 @@ async function postComment() {
   if (!currentUser) { alert('Please sign in first.'); return; }
   const btn = document.getElementById('btn-send-comment');
   btn.disabled = true;
-  const { data: row, error } = await sb.from('project_comments')
+  const { data: row, error } = await sb.from('comments')
     .insert([{ author: currentUser, body }])
     .select().single();
   btn.disabled = false;
@@ -1093,7 +1093,7 @@ async function deleteComment(id) {
   if (!confirm('Delete this comment?')) return;
   comments = comments.filter(c => c.id !== id);
   renderComments();
-  const { error } = await sb.from('project_comments').delete().eq('id', id);
+  const { error } = await sb.from('comments').delete().eq('id', id);
   if (error) {
     console.error('Comment delete error:', error);
     showLoadError(formatSbError('Supabase comment delete error', error));
@@ -1148,8 +1148,8 @@ function renderComments() {
 }
 
 function subscribeCommentsRealtime() {
-  sb.channel('project-comments-changes')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'project_comments' }, payload => {
+  sb.channel('comments-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, payload => {
       const { eventType, new: newRow, old: oldRow } = payload;
       if (eventType === 'INSERT') {
         if (!comments.find(c => c.id === newRow.id)) {
