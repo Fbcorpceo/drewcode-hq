@@ -1137,8 +1137,13 @@
     </div>
 
     <div class="field-group">
-      <label class="field-label" for="f-link">Link to your work</label>
-      <input class="field-input" type="url" id="f-link" placeholder="https://..." />
+      <label class="field-label" for="f-link-plans">Link to plans</label>
+      <input class="field-input" type="url" id="f-link-plans" placeholder="https://drive.google.com/..." />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="f-link-bid">Link to bid</label>
+      <input class="field-input" type="url" id="f-link-bid" placeholder="https://..." />
     </div>
 
     <div class="field-group">
@@ -1228,7 +1233,8 @@ async function loadTasks() {
       milestone: r.milestone || '',
       priority: r.priority || '',
       color: r.color || COLORS[0],
-      link: r.link || '',
+      link_plans: r.link_plans || '',
+      link_bid: r.link_bid || '',
       location: r.location || '',
       client: r.client || '',
       bid_amount: r.bid_amount || '',
@@ -1256,7 +1262,7 @@ async function dbInsert(data) {
   const { data: row, error } = await sb.from('tasks').insert([{
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
-    link: data.link || null,
+    link_plans: data.link_plans || null, link_bid: data.link_bid || null,
     location: data.location, client: data.client, bid_amount: data.bid_amount,
     contact: data.contact, contact_phone: data.contact_phone, contact_email: data.contact_email
   }]).select().single();
@@ -1272,7 +1278,7 @@ async function dbUpdate(id, data) {
   const { error } = await sb.from('tasks').update({
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
-    link: data.link || null,
+    link_plans: data.link_plans || null, link_bid: data.link_bid || null,
     location: data.location, client: data.client, bid_amount: data.bid_amount,
     contact: data.contact, contact_phone: data.contact_phone, contact_email: data.contact_email
   }).eq('id', id);
@@ -1325,7 +1331,7 @@ function rowToTask(r) {
     id: r.id, col: r.col, title: r.title, desc: r.description || '',
     owner: r.owner || '', due: r.due || '', milestone: r.milestone || '',
     priority: r.priority || '', color: r.color || COLORS[0],
-    link: r.link || '',
+    link_plans: r.link_plans || '', link_bid: r.link_bid || '',
     location: r.location || '', client: r.client || '',
     bid_amount: r.bid_amount || '', contact: r.contact || '',
     contact_phone: r.contact_phone || '', contact_email: r.contact_email || '',
@@ -1663,7 +1669,8 @@ function renderAll() {
             ${t.owner ? `<div class="chip"><div class="owner-av" style="background:${avBg}20;color:${avBg}">${initials(t.owner)}</div>${escHtml(t.owner)}</div>` : ''}
             ${ds ? `<div class="chip ${ds.cls}">⏱ ${ds.label}</div>` : ''}
             ${t.milestone ? `<div class="chip milestone-chip">◆ ${escHtml(t.milestone)}</div>` : ''}
-            ${t.link ? `<a class="chip link-chip" href="${escHtml(t.link)}" target="_blank" rel="noopener noreferrer" title="${escHtml(t.link)}" onclick="event.stopPropagation()" draggable="false">🔗 <span class="link-text">${escHtml(linkLabel(t.link))}</span></a>` : ''}
+            ${t.link_plans ? `<a class="chip link-chip" href="${escHtml(t.link_plans)}" target="_blank" rel="noopener noreferrer" title="${escHtml(t.link_plans)}" onclick="event.stopPropagation()" draggable="false">📋 <span class="link-text">Plans</span></a>` : ''}
+            ${t.link_bid ? `<a class="chip link-chip" href="${escHtml(t.link_bid)}" target="_blank" rel="noopener noreferrer" title="${escHtml(t.link_bid)}" onclick="event.stopPropagation()" draggable="false">📄 <span class="link-text">Bid</span></a>` : ''}
           </div>`;
 
         card.addEventListener('dragstart', e => {
@@ -1818,14 +1825,15 @@ function openModal(id, col) {
     document.getElementById('f-due').value        = t.due || '';
     document.getElementById('f-milestone').value  = t.milestone || '';
     document.getElementById('f-priority').value   = t.priority || '';
-    document.getElementById('f-link').value       = t.link || '';
+    document.getElementById('f-link-plans').value = t.link_plans || '';
+    document.getElementById('f-link-bid').value   = t.link_bid || '';
     selectedColor = t.color || COLORS[0];
     document.getElementById('btn-delete').style.display = '';
     document.getElementById('notes-section').style.display = '';
     loadCardNotes(id);
   } else {
     document.getElementById('modal-title').textContent = 'New project';
-    ['f-title','f-location','f-desc','f-client','f-contact','f-contact-phone','f-contact-email','f-bid-amount','f-owner','f-due','f-milestone','f-link'].forEach(id => document.getElementById(id).value = '');
+    ['f-title','f-location','f-desc','f-client','f-contact','f-contact-phone','f-contact-email','f-bid-amount','f-owner','f-due','f-milestone','f-link-plans','f-link-bid'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('f-priority').value = '';
     selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
     document.getElementById('btn-delete').style.display = 'none';
@@ -1853,7 +1861,8 @@ async function saveTask() {
     milestone:  document.getElementById('f-milestone').value.trim(),
     priority:   document.getElementById('f-priority').value,
     color:      selectedColor,
-    link:       normalizeLink(document.getElementById('f-link').value),
+    link_plans: normalizeLink(document.getElementById('f-link-plans').value),
+    link_bid:   normalizeLink(document.getElementById('f-link-bid').value),
     location:      document.getElementById('f-location').value.trim(),
     client:        document.getElementById('f-client').value.trim(),
     bid_amount:    document.getElementById('f-bid-amount').value.trim(),
