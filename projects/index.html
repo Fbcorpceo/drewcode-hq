@@ -175,11 +175,56 @@
     white-space: nowrap;
   }
 
+  /* ── Stats strip ── */
+  .stats-strip {
+    display: flex;
+    gap: 12px;
+    padding: 18px 28px 0;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    flex: 1 1 160px;
+    min-width: 150px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    transition: background var(--transition), border-color var(--transition);
+  }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .stat-value {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.25;
+    margin-top: 1px;
+  }
+  .stat-sub {
+    font-size: 10px;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+  @media (max-width: 768px) {
+    .stats-strip { padding: 12px 12px 0; gap: 8px; }
+    .stat-card { padding: 10px 12px 9px; min-width: 130px; }
+    .stat-value { font-size: 16px; }
+  }
+
   /* ── Board ── */
   .board {
     display: flex;
     gap: 16px;
-    padding: 24px 28px 40px;
+    padding: 18px 28px 40px;
     align-items: flex-start;
     overflow-x: auto;
     min-height: calc(100vh - 58px);
@@ -227,6 +272,8 @@
   .col-estimating .col-indicator { background: #e0a84a; }
   .col-submitted .col-indicator  { background: #7c6dfa; }
   .col-followup .col-indicator   { background: #34c48b; }
+  .col-won .col-indicator        { background: #1D9E75; }
+  .col-lost .col-indicator       { background: #e24b4a; }
 
   .cards-area {
     padding: 10px;
@@ -508,6 +555,85 @@
   .color-swatch:hover { transform: scale(1.18); }
   .color-swatch.selected { border-color: #fff; }
 
+  /* ── Project notes (in edit modal) ── */
+  .notes-section {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .notes-head {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .notes-title {
+    font-size: 12px; font-weight: 500; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .notes-count {
+    font-size: 11px; color: var(--text3); font-family: var(--mono);
+  }
+  .notes-list {
+    display: flex; flex-direction: column; gap: 8px;
+    max-height: 220px; overflow-y: auto;
+    margin-bottom: 10px;
+  }
+  .notes-list::-webkit-scrollbar { width: 4px; }
+  .notes-list::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 2px; }
+  .note {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 10px 9px;
+  }
+  .note-head {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 3px;
+  }
+  .note-av {
+    width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 600; flex-shrink: 0;
+  }
+  .note-author { font-size: 11px; font-weight: 500; color: var(--text2); }
+  .note-time { font-size: 10px; color: var(--text3); margin-left: auto; }
+  .note-body {
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .note-del {
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 11px; padding: 0 2px;
+    opacity: 0; transition: opacity 0.15s, color var(--transition);
+  }
+  .note:hover .note-del { opacity: 1; }
+  .note-del:hover { color: #f07070; }
+  .notes-empty {
+    text-align: center; color: var(--text3); font-size: 11px;
+    padding: 12px 8px;
+  }
+  .notes-input {
+    width: 100%; resize: none;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text);
+    font-family: var(--font); font-size: 12px;
+    padding: 8px 10px; outline: none;
+    transition: border-color var(--transition);
+    min-height: 52px;
+  }
+  .notes-input:focus { border-color: var(--accent); }
+  .notes-send-row {
+    display: flex; justify-content: flex-end; margin-top: 6px;
+  }
+  .btn-add-note {
+    background: var(--accent); color: #fff; border: none;
+    padding: 5px 12px; border-radius: var(--radius);
+    font-size: 11px; font-weight: 500; cursor: pointer;
+    font-family: var(--font);
+    transition: background var(--transition);
+  }
+  .btn-add-note:hover { background: var(--accent2); }
+  .btn-add-note:disabled { opacity: 0.4; cursor: not-allowed; }
+
   .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
   .btn-del {
     background: transparent; color: #f07070;
@@ -727,8 +853,12 @@
     <span class="board-name">Project Board</span>
   </div>
   <div class="topbar-right">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-text" type="text" placeholder="Search projects..." />
+    </div>
     <div class="filter-wrap">
-      <select class="filter-select" id="search-input">
+      <select class="filter-select" id="owner-filter">
         <option value="">All members</option>
         <option value="Adam">Adam</option>
         <option value="Drew">Drew</option>
@@ -770,6 +900,35 @@
     </div>
   </div>
 </header>
+
+<!-- Stats strip -->
+<div class="stats-strip" id="stats-strip">
+  <div class="stat-card">
+    <div class="stat-label">Pipeline value</div>
+    <div class="stat-value" id="stat-pipeline">$0</div>
+    <div class="stat-sub" id="stat-pipeline-sub">0 active bids</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg bid size</div>
+    <div class="stat-value" id="stat-avg">$0</div>
+    <div class="stat-sub">Across active pipeline</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Win rate</div>
+    <div class="stat-value" id="stat-winrate">—</div>
+    <div class="stat-sub" id="stat-winrate-sub">0 won · 0 lost</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Won $</div>
+    <div class="stat-value" id="stat-won">$0</div>
+    <div class="stat-sub" id="stat-won-sub">All time</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Bids due soon</div>
+    <div class="stat-value" id="stat-due">0</div>
+    <div class="stat-sub">Due in next 7 days</div>
+  </div>
+</div>
 
 <!-- Board -->
 <div id="load-error" style="display:none;margin:12px 20px;padding:12px 16px;background:#3a1d1d;border:1px solid #e24b4a;border-radius:8px;color:#ffb8b8;font-size:13px;font-family:var(--mono);white-space:pre-wrap;word-break:break-word;"></div>
@@ -840,6 +999,32 @@
     <button class="add-btn" onclick="openModal(null,'followup')"><span class="plus">+</span> Add project</button>
   </div>
 
+  <div class="column col-won" id="col-won">
+    <div class="col-header">
+      <div class="col-indicator"></div>
+      <div class="col-info">
+        <div class="col-title">Won</div>
+        <div class="col-sub">Contracts secured</div>
+      </div>
+      <span class="col-count" id="badge-won">0</span>
+    </div>
+    <div class="cards-area" id="area-won" data-col="won"></div>
+    <button class="add-btn" onclick="openModal(null,'won')"><span class="plus">+</span> Add project</button>
+  </div>
+
+  <div class="column col-lost" id="col-lost">
+    <div class="col-header">
+      <div class="col-indicator"></div>
+      <div class="col-info">
+        <div class="col-title">Lost</div>
+        <div class="col-sub">Did not secure</div>
+      </div>
+      <span class="col-count" id="badge-lost">0</span>
+    </div>
+    <div class="cards-area" id="area-lost" data-col="lost"></div>
+    <button class="add-btn" onclick="openModal(null,'lost')"><span class="plus">+</span> Add project</button>
+  </div>
+
   <aside class="comments-panel" id="comments-panel">
     <div class="comments-header">
       <div>
@@ -882,14 +1067,24 @@
       <textarea class="field-textarea" id="f-desc" placeholder="Add more context about this project..."></textarea>
     </div>
 
+    <div class="field-group">
+      <label class="field-label" for="f-client">GC / Owner client</label>
+      <input class="field-input" type="text" id="f-client" placeholder="e.g. Turner Construction" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="f-contact">Contact name</label>
+      <input class="field-input" type="text" id="f-contact" placeholder="e.g. John Smith" />
+    </div>
+
     <div class="field-row">
       <div class="field-group">
-        <label class="field-label" for="f-client">GC / Owner client</label>
-        <input class="field-input" type="text" id="f-client" placeholder="e.g. Turner Construction" />
+        <label class="field-label" for="f-contact-phone">Contact phone</label>
+        <input class="field-input" type="tel" id="f-contact-phone" placeholder="(555) 123-4567" />
       </div>
       <div class="field-group">
-        <label class="field-label" for="f-contact">Contact person</label>
-        <input class="field-input" type="text" id="f-contact" placeholder="e.g. John Smith" />
+        <label class="field-label" for="f-contact-email">Contact email</label>
+        <input class="field-input" type="email" id="f-contact-email" placeholder="john@example.com" />
       </div>
     </div>
 
@@ -951,6 +1146,18 @@
       <div class="color-row" id="color-row"></div>
     </div>
 
+    <div class="notes-section" id="notes-section" style="display:none;">
+      <div class="notes-head">
+        <div class="notes-title">Project notes</div>
+        <div class="notes-count" id="notes-count">0</div>
+      </div>
+      <div class="notes-list" id="notes-list"></div>
+      <textarea class="notes-input" id="note-input" placeholder="Add a note about this project..."></textarea>
+      <div class="notes-send-row">
+        <button class="btn-add-note" id="btn-add-note" onclick="postCardNote()">Add note</button>
+      </div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn-del" id="btn-delete" style="display:none;" onclick="deleteTask()">Delete</button>
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -987,7 +1194,7 @@ function ownerColor(name) {
 
 let tasks = [];
 let editId = null, editCol = null, selectedColor = COLORS[0], dragId = null;
-let filterOwner = '', filterPriority = '';
+let filterOwner = '', filterPriority = '', filterSearch = '';
 
 // ── Supabase helpers ──
 function showLoadError(msg) {
@@ -1026,6 +1233,8 @@ async function loadTasks() {
       client: r.client || '',
       bid_amount: r.bid_amount || '',
       contact: r.contact || '',
+      contact_phone: r.contact_phone || '',
+      contact_email: r.contact_email || '',
       sort_order: r.sort_order || 0,
     }));
     showLoading(false);
@@ -1048,7 +1257,8 @@ async function dbInsert(data) {
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
     link: data.link || null,
-    location: data.location, client: data.client, bid_amount: data.bid_amount, contact: data.contact
+    location: data.location, client: data.client, bid_amount: data.bid_amount,
+    contact: data.contact, contact_phone: data.contact_phone, contact_email: data.contact_email
   }]).select().single();
   if (error) {
     console.error('Insert error:', error);
@@ -1063,7 +1273,8 @@ async function dbUpdate(id, data) {
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
     link: data.link || null,
-    location: data.location, client: data.client, bid_amount: data.bid_amount, contact: data.contact
+    location: data.location, client: data.client, bid_amount: data.bid_amount,
+    contact: data.contact, contact_phone: data.contact_phone, contact_email: data.contact_email
   }).eq('id', id);
   if (error) {
     console.error('Update error:', error);
@@ -1117,6 +1328,7 @@ function rowToTask(r) {
     link: r.link || '',
     location: r.location || '', client: r.client || '',
     bid_amount: r.bid_amount || '', contact: r.contact || '',
+    contact_phone: r.contact_phone || '', contact_email: r.contact_email || '',
     sort_order: r.sort_order || 0,
   };
 }
@@ -1241,6 +1453,91 @@ document.getElementById('comment-input').addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); postComment(); }
 });
 
+// ── Per-card project notes ──
+let cardNotes = [];
+
+async function loadCardNotes(taskId) {
+  cardNotes = [];
+  renderCardNotes();
+  const { data, error } = await sb.from('card_comments')
+    .select('*').eq('task_id', taskId).order('created_at', { ascending: true });
+  if (error) {
+    console.error('Card notes load error:', error);
+    return;
+  }
+  cardNotes = data || [];
+  renderCardNotes();
+}
+
+function renderCardNotes() {
+  const list = document.getElementById('notes-list');
+  const count = document.getElementById('notes-count');
+  if (!list) return;
+  count.textContent = cardNotes.length;
+  list.innerHTML = '';
+  if (cardNotes.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'notes-empty';
+    empty.textContent = 'No notes yet. Add the first one below.';
+    list.appendChild(empty);
+    return;
+  }
+  cardNotes.forEach(n => {
+    const av = ownerColor(n.author || '');
+    const canDel = currentUser && n.author === currentUser;
+    const el = document.createElement('div');
+    el.className = 'note';
+    el.innerHTML = `
+      <div class="note-head">
+        <div class="note-av" style="background:${av}22;color:${av}">${escHtml(initials(n.author || '?'))}</div>
+        <div class="note-author">${escHtml(n.author || 'Unknown')}</div>
+        <div class="note-time" title="${escHtml(n.created_at || '')}">${timeAgo(n.created_at)}</div>
+        ${canDel ? `<button class="note-del" title="Delete" onclick="deleteCardNote('${n.id}')">✕</button>` : ''}
+      </div>
+      <div class="note-body">${escHtml(n.body || '')}</div>
+    `;
+    list.appendChild(el);
+  });
+  list.scrollTop = list.scrollHeight;
+}
+
+async function postCardNote() {
+  if (!editId) return;
+  const el = document.getElementById('note-input');
+  const body = el.value.trim();
+  if (!body) return;
+  if (!currentUser) { alert('Please sign in first.'); return; }
+  const btn = document.getElementById('btn-add-note');
+  btn.disabled = true;
+  const { data: row, error } = await sb.from('card_comments')
+    .insert([{ task_id: editId, author: currentUser, body }])
+    .select().single();
+  btn.disabled = false;
+  if (error) {
+    console.error('Card note insert error:', error);
+    showLoadError(formatSbError('Supabase card note insert error', error));
+    return;
+  }
+  el.value = '';
+  if (row && !cardNotes.find(n => n.id === row.id)) {
+    cardNotes.push(row);
+    renderCardNotes();
+  }
+}
+
+async function deleteCardNote(id) {
+  if (!confirm('Delete this note?')) return;
+  cardNotes = cardNotes.filter(n => n.id !== id);
+  renderCardNotes();
+  const { error } = await sb.from('card_comments').delete().eq('id', id);
+  if (error) console.error('Card note delete error:', error);
+}
+
+// Cmd/Ctrl+Enter to add a note
+document.getElementById('note-input').addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') { e.preventDefault(); postCardNote(); }
+});
+
 function showLoading(on) {
   document.getElementById('loading-bar').style.width = on ? '100%' : '0';
   document.getElementById('loading-bar').style.opacity = on ? '1' : '0';
@@ -1265,11 +1562,65 @@ function fmtDate(s) {
 function matchesFilter(t) {
   const ownerMatch = !filterOwner || t.owner.toLowerCase().includes(filterOwner.toLowerCase());
   const prioMatch  = !filterPriority || t.priority === filterPriority;
-  return ownerMatch && prioMatch;
+  const searchMatch = !filterSearch || [
+    t.title, t.location, t.client, t.contact, t.contact_email,
+    t.contact_phone, t.desc, t.milestone, t.owner
+  ].some(f => (f || '').toLowerCase().includes(filterSearch.toLowerCase()));
+  return ownerMatch && prioMatch && searchMatch;
+}
+
+// Parse a free-form bid amount like "$1,250,000", "1.2M", "850k" → number
+function parseBidAmount(s) {
+  if (!s) return 0;
+  const raw = String(s).trim().toLowerCase().replace(/[\$,\s]/g, '');
+  const mult = raw.endsWith('m') ? 1_000_000 : raw.endsWith('k') ? 1_000 : 1;
+  const n = parseFloat(raw.replace(/[mk]$/, ''));
+  return isNaN(n) ? 0 : n * mult;
+}
+
+function fmtMoney(n) {
+  if (!n) return '$0';
+  if (n >= 1_000_000) return '$' + (n / 1_000_000).toFixed(n >= 10_000_000 ? 1 : 2).replace(/\.?0+$/, '') + 'M';
+  if (n >= 1_000)     return '$' + (n / 1_000).toFixed(0) + 'k';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function renderStats() {
+  const ACTIVE = ['lead','review','estimating','submitted','followup'];
+  const active = tasks.filter(t => ACTIVE.includes(t.col));
+  const wonTasks  = tasks.filter(t => t.col === 'won');
+  const lostTasks = tasks.filter(t => t.col === 'lost');
+
+  const pipelineTotal = active.reduce((s, t) => s + parseBidAmount(t.bid_amount), 0);
+  const wonTotal      = wonTasks.reduce((s, t) => s + parseBidAmount(t.bid_amount), 0);
+  const avgBid        = active.length ? pipelineTotal / active.length : 0;
+
+  const wonCount  = wonTasks.length;
+  const lostCount = lostTasks.length;
+  const winRate = (wonCount + lostCount) > 0
+    ? Math.round((wonCount / (wonCount + lostCount)) * 100) + '%'
+    : '—';
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const in7 = new Date(today.getTime() + 7 * 86400000);
+  const dueSoon = active.filter(t => {
+    if (!t.due) return false;
+    const d = new Date(t.due + 'T00:00:00');
+    return d >= today && d <= in7;
+  }).length;
+
+  document.getElementById('stat-pipeline').textContent     = fmtMoney(pipelineTotal);
+  document.getElementById('stat-pipeline-sub').textContent = active.length + ' active bid' + (active.length === 1 ? '' : 's');
+  document.getElementById('stat-avg').textContent          = fmtMoney(avgBid);
+  document.getElementById('stat-winrate').textContent      = winRate;
+  document.getElementById('stat-winrate-sub').textContent  = wonCount + ' won · ' + lostCount + ' lost';
+  document.getElementById('stat-won').textContent          = fmtMoney(wonTotal);
+  document.getElementById('stat-due').textContent          = dueSoon;
 }
 
 function renderAll() {
-  ['lead','review','estimating','submitted','followup'].forEach(col => {
+  renderStats();
+  ['lead','review','estimating','submitted','followup','won','lost'].forEach(col => {
     const area = document.getElementById('area-' + col);
     const colTasks = tasks.filter(t => t.col === col).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     const visibleCount = colTasks.filter(matchesFilter).length;
@@ -1307,6 +1658,8 @@ function renderAll() {
             ${t.bid_amount ? `<div class="chip bid-chip">💰 ${escHtml(t.bid_amount)}</div>` : ''}
             ${t.client ? `<div class="chip client-chip">🏢 ${escHtml(t.client)}</div>` : ''}
             ${t.contact ? `<div class="chip contact-chip">👤 ${escHtml(t.contact)}</div>` : ''}
+            ${t.contact_phone ? `<a class="chip contact-chip" href="tel:${escHtml(t.contact_phone)}" onclick="event.stopPropagation()" draggable="false">📞 ${escHtml(t.contact_phone)}</a>` : ''}
+            ${t.contact_email ? `<a class="chip contact-chip" href="mailto:${escHtml(t.contact_email)}" onclick="event.stopPropagation()" draggable="false">✉ ${escHtml(t.contact_email)}</a>` : ''}
             ${t.owner ? `<div class="chip"><div class="owner-av" style="background:${avBg}20;color:${avBg}">${initials(t.owner)}</div>${escHtml(t.owner)}</div>` : ''}
             ${ds ? `<div class="chip ${ds.cls}">⏱ ${ds.label}</div>` : ''}
             ${t.milestone ? `<div class="chip milestone-chip">◆ ${escHtml(t.milestone)}</div>` : ''}
@@ -1420,7 +1773,12 @@ function getDragAfterElement(container, y) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-document.getElementById('search-input').addEventListener('change', e => {
+document.getElementById('search-text').addEventListener('input', e => {
+  filterSearch = e.target.value.trim();
+  renderAll();
+});
+
+document.getElementById('owner-filter').addEventListener('change', e => {
   filterOwner = e.target.value.trim();
   renderAll();
 });
@@ -1452,8 +1810,10 @@ function openModal(id, col) {
     document.getElementById('f-location').value   = t.location || '';
     document.getElementById('f-desc').value       = t.desc || '';
     document.getElementById('f-client').value     = t.client || '';
-    document.getElementById('f-contact').value    = t.contact || '';
-    document.getElementById('f-bid-amount').value = t.bid_amount || '';
+    document.getElementById('f-contact').value       = t.contact || '';
+    document.getElementById('f-contact-phone').value = t.contact_phone || '';
+    document.getElementById('f-contact-email').value = t.contact_email || '';
+    document.getElementById('f-bid-amount').value    = t.bid_amount || '';
     document.getElementById('f-owner').value      = t.owner || '';
     document.getElementById('f-due').value        = t.due || '';
     document.getElementById('f-milestone').value  = t.milestone || '';
@@ -1461,12 +1821,16 @@ function openModal(id, col) {
     document.getElementById('f-link').value       = t.link || '';
     selectedColor = t.color || COLORS[0];
     document.getElementById('btn-delete').style.display = '';
+    document.getElementById('notes-section').style.display = '';
+    loadCardNotes(id);
   } else {
     document.getElementById('modal-title').textContent = 'New project';
-    ['f-title','f-location','f-desc','f-client','f-contact','f-bid-amount','f-owner','f-due','f-milestone','f-link'].forEach(id => document.getElementById(id).value = '');
+    ['f-title','f-location','f-desc','f-client','f-contact','f-contact-phone','f-contact-email','f-bid-amount','f-owner','f-due','f-milestone','f-link'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('f-priority').value = '';
     selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
     document.getElementById('btn-delete').style.display = 'none';
+    document.getElementById('notes-section').style.display = 'none';
+    cardNotes = [];
   }
   buildColorRow();
   document.getElementById('modal').style.display = 'flex';
@@ -1490,10 +1854,12 @@ async function saveTask() {
     priority:   document.getElementById('f-priority').value,
     color:      selectedColor,
     link:       normalizeLink(document.getElementById('f-link').value),
-    location:   document.getElementById('f-location').value.trim(),
-    client:     document.getElementById('f-client').value.trim(),
-    bid_amount: document.getElementById('f-bid-amount').value.trim(),
-    contact:    document.getElementById('f-contact').value.trim(),
+    location:      document.getElementById('f-location').value.trim(),
+    client:        document.getElementById('f-client').value.trim(),
+    bid_amount:    document.getElementById('f-bid-amount').value.trim(),
+    contact:       document.getElementById('f-contact').value.trim(),
+    contact_phone: document.getElementById('f-contact-phone').value.trim(),
+    contact_email: document.getElementById('f-contact-email').value.trim(),
   };
   closeModal();
   if (editId) {
