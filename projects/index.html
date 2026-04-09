@@ -391,6 +391,12 @@
   }
   .edit-btn:hover { background: var(--bg4); color: var(--text2); }
 
+  .card-location {
+    font-size: 11px; color: var(--text2); line-height: 1.4;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 3px;
+  }
+
   .card-desc {
     font-size: 12px; color: var(--text3); line-height: 1.55;
     margin-bottom: 9px;
@@ -428,6 +434,9 @@
   .due-soon { background: rgba(186,117,23,0.12); color: #e0a84a; border-color: rgba(186,117,23,0.2); }
   .due-late { background: rgba(226,75,74,0.12); color: #f07070; border-color: rgba(226,75,74,0.2); }
   .milestone-chip { color: #a89dfc; border-color: rgba(124,109,250,0.2); background: rgba(124,109,250,0.08); }
+  .bid-chip     { color: #5dd4a0; border-color: rgba(52,196,139,0.22); background: rgba(52,196,139,0.08); font-weight: 500; }
+  .client-chip  { color: #e0a84a; border-color: rgba(186,117,23,0.22); background: rgba(186,117,23,0.08); }
+  .contact-chip { color: #9bd0ff; border-color: rgba(55,138,221,0.22); background: rgba(55,138,221,0.06); }
   .link-chip { color: #6fb8ff; border-color: rgba(55,138,221,0.25); background: rgba(55,138,221,0.08); text-decoration: none; max-width: 100%; }
   .link-chip:hover { background: rgba(55,138,221,0.16); color: #9bd0ff; }
   .link-chip .link-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
@@ -541,6 +550,9 @@
   :root.light .due-soon   { background: rgba(160,90,0,0.1);   color: #8a5200; border-color: rgba(160,90,0,0.2); }
   :root.light .due-late   { background: rgba(200,40,40,0.1);  color: #b02020; border-color: rgba(200,40,40,0.2); }
   :root.light .milestone-chip { color: #5244c9; border-color: rgba(107,92,245,0.22); background: rgba(107,92,245,0.08); }
+  :root.light .bid-chip     { color: #0d7a48; border-color: rgba(20,150,90,0.22); background: rgba(20,150,90,0.08); }
+  :root.light .client-chip  { color: #8a5200; border-color: rgba(160,90,0,0.22); background: rgba(160,90,0,0.08); }
+  :root.light .contact-chip { color: #1c6bb8; border-color: rgba(28,107,184,0.22); background: rgba(28,107,184,0.06); }
   :root.light .link-chip { color: #1c6bb8; border-color: rgba(28,107,184,0.25); background: rgba(28,107,184,0.08); }
   :root.light .link-chip:hover { background: rgba(28,107,184,0.16); color: #14538f; }
   :root.light .cards-area.drag-over { background: rgba(107,92,245,0.06); }
@@ -828,13 +840,40 @@
     </div>
 
     <div class="field-group">
-      <label class="field-label" for="f-title">Project title</label>
-      <input class="field-input" type="text" id="f-title" placeholder="e.g. Redesign landing page" />
+      <label class="field-label" for="f-title">Project name</label>
+      <input class="field-input" type="text" id="f-title" placeholder="e.g. Lincoln Plaza tower" />
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="f-location">Location</label>
+      <input class="field-input" type="text" id="f-location" placeholder="e.g. Brooklyn, NY" />
     </div>
 
     <div class="field-group">
       <label class="field-label" for="f-desc">Description</label>
       <textarea class="field-textarea" id="f-desc" placeholder="Add more context about this project..."></textarea>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label" for="f-client">GC / Owner client</label>
+        <input class="field-input" type="text" id="f-client" placeholder="e.g. Turner Construction" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="f-contact">Contact person</label>
+        <input class="field-input" type="text" id="f-contact" placeholder="e.g. John Smith" />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label" for="f-bid-amount">Bid amount / contract value</label>
+        <input class="field-input" type="text" id="f-bid-amount" placeholder="e.g. $1,250,000" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="f-due">Bid due date</label>
+        <input class="field-input" type="date" id="f-due" />
+      </div>
     </div>
 
     <div class="field-row">
@@ -869,15 +908,9 @@
       </div>
     </div>
 
-    <div class="field-row">
-      <div class="field-group">
-        <label class="field-label" for="f-due">Due date</label>
-        <input class="field-input" type="date" id="f-due" />
-      </div>
-      <div class="field-group">
-        <label class="field-label" for="f-milestone">Milestone</label>
-        <input class="field-input" type="text" id="f-milestone" placeholder="e.g. Q2 Launch" />
-      </div>
+    <div class="field-group">
+      <label class="field-label" for="f-milestone">Milestone</label>
+      <input class="field-input" type="text" id="f-milestone" placeholder="e.g. Q2 Launch" />
     </div>
 
     <div class="field-group">
@@ -961,6 +994,10 @@ async function loadTasks() {
       priority: r.priority || '',
       color: r.color || COLORS[0],
       link: r.link || '',
+      location: r.location || '',
+      client: r.client || '',
+      bid_amount: r.bid_amount || '',
+      contact: r.contact || '',
       sort_order: r.sort_order || 0,
     }));
     showLoading(false);
@@ -982,7 +1019,8 @@ async function dbInsert(data) {
   const { data: row, error } = await sb.from('tasks').insert([{
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
-    link: data.link || null
+    link: data.link || null,
+    location: data.location, client: data.client, bid_amount: data.bid_amount, contact: data.contact
   }]).select().single();
   if (error) {
     console.error('Insert error:', error);
@@ -996,7 +1034,8 @@ async function dbUpdate(id, data) {
   const { error } = await sb.from('tasks').update({
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
     due: data.due || null, milestone: data.milestone, priority: data.priority, color: data.color,
-    link: data.link || null
+    link: data.link || null,
+    location: data.location, client: data.client, bid_amount: data.bid_amount, contact: data.contact
   }).eq('id', id);
   if (error) {
     console.error('Update error:', error);
@@ -1048,6 +1087,8 @@ function rowToTask(r) {
     owner: r.owner || '', due: r.due || '', milestone: r.milestone || '',
     priority: r.priority || '', color: r.color || COLORS[0],
     link: r.link || '',
+    location: r.location || '', client: r.client || '',
+    bid_amount: r.bid_amount || '', contact: r.contact || '',
     sort_order: r.sort_order || 0,
   };
 }
@@ -1231,9 +1272,13 @@ function renderAll() {
             <div class="card-title">${escHtml(t.title)}</div>
             <button class="edit-btn" onclick="openModal('${t.id}','${col}')">✎</button>
           </div>
+          ${t.location ? `<div class="card-location">📍 ${escHtml(t.location)}</div>` : ''}
           ${t.desc ? `<div class="card-desc">${escHtml(t.desc)}</div>` : ''}
           <div class="card-meta">
             ${pm ? `<span class="priority-badge ${pm.cls}">${pm.label}</span>` : ''}
+            ${t.bid_amount ? `<div class="chip bid-chip">💰 ${escHtml(t.bid_amount)}</div>` : ''}
+            ${t.client ? `<div class="chip client-chip">🏢 ${escHtml(t.client)}</div>` : ''}
+            ${t.contact ? `<div class="chip contact-chip">👤 ${escHtml(t.contact)}</div>` : ''}
             ${t.owner ? `<div class="chip"><div class="owner-av" style="background:${avBg}20;color:${avBg}">${initials(t.owner)}</div>${escHtml(t.owner)}</div>` : ''}
             ${ds ? `<div class="chip ${ds.cls}">⏱ ${ds.label}</div>` : ''}
             ${t.milestone ? `<div class="chip milestone-chip">◆ ${escHtml(t.milestone)}</div>` : ''}
@@ -1376,7 +1421,11 @@ function openModal(id, col) {
     const t = tasks.find(t => t.id === id);
     document.getElementById('modal-title').textContent = 'Edit project';
     document.getElementById('f-title').value      = t.title;
+    document.getElementById('f-location').value   = t.location || '';
     document.getElementById('f-desc').value       = t.desc || '';
+    document.getElementById('f-client').value     = t.client || '';
+    document.getElementById('f-contact').value    = t.contact || '';
+    document.getElementById('f-bid-amount').value = t.bid_amount || '';
     document.getElementById('f-owner').value      = t.owner || '';
     document.getElementById('f-due').value        = t.due || '';
     document.getElementById('f-milestone').value  = t.milestone || '';
@@ -1386,7 +1435,7 @@ function openModal(id, col) {
     document.getElementById('btn-delete').style.display = '';
   } else {
     document.getElementById('modal-title').textContent = 'New project';
-    ['f-title','f-desc','f-owner','f-due','f-milestone','f-link'].forEach(id => document.getElementById(id).value = '');
+    ['f-title','f-location','f-desc','f-client','f-contact','f-bid-amount','f-owner','f-due','f-milestone','f-link'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('f-priority').value = '';
     selectedColor = COLORS[Math.floor(Math.random() * COLORS.length)];
     document.getElementById('btn-delete').style.display = 'none';
@@ -1406,13 +1455,17 @@ async function saveTask() {
   const data = {
     col: editCol,
     title,
-    desc:      document.getElementById('f-desc').value.trim(),
-    owner:     document.getElementById('f-owner').value.trim(),
-    due:       document.getElementById('f-due').value,
-    milestone: document.getElementById('f-milestone').value.trim(),
-    priority:  document.getElementById('f-priority').value,
-    color:     selectedColor,
-    link:      normalizeLink(document.getElementById('f-link').value),
+    desc:       document.getElementById('f-desc').value.trim(),
+    owner:      document.getElementById('f-owner').value.trim(),
+    due:        document.getElementById('f-due').value,
+    milestone:  document.getElementById('f-milestone').value.trim(),
+    priority:   document.getElementById('f-priority').value,
+    color:      selectedColor,
+    link:       normalizeLink(document.getElementById('f-link').value),
+    location:   document.getElementById('f-location').value.trim(),
+    client:     document.getElementById('f-client').value.trim(),
+    bid_amount: document.getElementById('f-bid-amount').value.trim(),
+    contact:    document.getElementById('f-contact').value.trim(),
   };
   closeModal();
   if (editId) {
