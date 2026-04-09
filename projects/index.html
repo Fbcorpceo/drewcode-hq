@@ -222,9 +222,11 @@
     border-radius: 99px;
   }
 
-  .col-todo .col-indicator { background: #6b6a7a; }
-  .col-doing .col-indicator { background: #7c6dfa; }
-  .col-done .col-indicator { background: #34c48b; }
+  .col-lead .col-indicator       { background: #6b6a7a; }
+  .col-review .col-indicator     { background: #378ADD; }
+  .col-estimating .col-indicator { background: #e0a84a; }
+  .col-submitted .col-indicator  { background: #7c6dfa; }
+  .col-followup .col-indicator   { background: #34c48b; }
 
   .cards-area {
     padding: 10px;
@@ -773,43 +775,69 @@
 <div id="load-error" style="display:none;margin:12px 20px;padding:12px 16px;background:#3a1d1d;border:1px solid #e24b4a;border-radius:8px;color:#ffb8b8;font-size:13px;font-family:var(--mono);white-space:pre-wrap;word-break:break-word;"></div>
 <div id="drop-indicator" style="display:none;height:3px;background:var(--accent);border-radius:99px;margin:2px 0;pointer-events:none;"></div>
 <div class="board" id="board">
-  <div class="column col-todo" id="col-todo">
+  <div class="column col-lead" id="col-lead">
     <div class="col-header">
       <div class="col-indicator"></div>
       <div class="col-info">
-        <div class="col-title">Not done</div>
-        <div class="col-sub">Backlog &amp; upcoming</div>
+        <div class="col-title">New Lead</div>
+        <div class="col-sub">Fresh opportunities</div>
       </div>
-      <span class="col-count" id="badge-todo">0</span>
+      <span class="col-count" id="badge-lead">0</span>
     </div>
-    <div class="cards-area" id="area-todo" data-col="todo"></div>
-    <button class="add-btn" onclick="openModal(null,'todo')"><span class="plus">+</span> Add project</button>
+    <div class="cards-area" id="area-lead" data-col="lead"></div>
+    <button class="add-btn" onclick="openModal(null,'lead')"><span class="plus">+</span> Add project</button>
   </div>
 
-  <div class="column col-doing" id="col-doing">
+  <div class="column col-review" id="col-review">
     <div class="col-header">
       <div class="col-indicator"></div>
       <div class="col-info">
-        <div class="col-title">Doing</div>
-        <div class="col-sub">In progress</div>
+        <div class="col-title">Plans Received / Under Review</div>
+        <div class="col-sub">Reviewing documents</div>
       </div>
-      <span class="col-count" id="badge-doing">0</span>
+      <span class="col-count" id="badge-review">0</span>
     </div>
-    <div class="cards-area" id="area-doing" data-col="doing"></div>
-    <button class="add-btn" onclick="openModal(null,'doing')"><span class="plus">+</span> Add project</button>
+    <div class="cards-area" id="area-review" data-col="review"></div>
+    <button class="add-btn" onclick="openModal(null,'review')"><span class="plus">+</span> Add project</button>
   </div>
 
-  <div class="column col-done" id="col-done">
+  <div class="column col-estimating" id="col-estimating">
     <div class="col-header">
       <div class="col-indicator"></div>
       <div class="col-info">
-        <div class="col-title">Done</div>
-        <div class="col-sub">Completed</div>
+        <div class="col-title">Estimating</div>
+        <div class="col-sub">Pricing in progress</div>
       </div>
-      <span class="col-count" id="badge-done">0</span>
+      <span class="col-count" id="badge-estimating">0</span>
     </div>
-    <div class="cards-area" id="area-done" data-col="done"></div>
-    <button class="add-btn" onclick="openModal(null,'done')"><span class="plus">+</span> Add project</button>
+    <div class="cards-area" id="area-estimating" data-col="estimating"></div>
+    <button class="add-btn" onclick="openModal(null,'estimating')"><span class="plus">+</span> Add project</button>
+  </div>
+
+  <div class="column col-submitted" id="col-submitted">
+    <div class="col-header">
+      <div class="col-indicator"></div>
+      <div class="col-info">
+        <div class="col-title">Bid Submitted</div>
+        <div class="col-sub">Awaiting response</div>
+      </div>
+      <span class="col-count" id="badge-submitted">0</span>
+    </div>
+    <div class="cards-area" id="area-submitted" data-col="submitted"></div>
+    <button class="add-btn" onclick="openModal(null,'submitted')"><span class="plus">+</span> Add project</button>
+  </div>
+
+  <div class="column col-followup" id="col-followup">
+    <div class="col-header">
+      <div class="col-indicator"></div>
+      <div class="col-info">
+        <div class="col-title">Follow up / Contract in Review</div>
+        <div class="col-sub">Closing stage</div>
+      </div>
+      <span class="col-count" id="badge-followup">0</span>
+    </div>
+    <div class="cards-area" id="area-followup" data-col="followup"></div>
+    <button class="add-btn" onclick="openModal(null,'followup')"><span class="plus">+</span> Add project</button>
   </div>
 
   <aside class="comments-panel" id="comments-panel">
@@ -1241,7 +1269,7 @@ function matchesFilter(t) {
 }
 
 function renderAll() {
-  ['todo','doing','done'].forEach(col => {
+  ['lead','review','estimating','submitted','followup'].forEach(col => {
     const area = document.getElementById('area-' + col);
     const colTasks = tasks.filter(t => t.col === col).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     const visibleCount = colTasks.filter(matchesFilter).length;
