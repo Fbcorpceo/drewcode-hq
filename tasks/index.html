@@ -687,7 +687,7 @@
     <div class="login-sub">Select your name and enter the team PIN</div>
     <select class="name-select" id="login-name">
       <option value="">Select your name...</option>
-      <option>Adam</option><option>Drew</option><option>David</option>
+      <option>Adam</option><option>Alaina</option><option>Drew</option><option>David</option>
       <option>Erickka</option><option>Gene</option><option>George</option><option>Lulu</option>
       <option>Kourk</option><option>Monica</option><option>Ashleigh</option>
       <option>Ellada</option><option>Mike</option><option>Ray</option>
@@ -717,6 +717,7 @@
       <select class="filter-select" id="search-input">
         <option value="">All members</option>
         <option value="Adam">Adam</option>
+        <option value="Alaina">Alaina</option>
         <option value="Drew">Drew</option>
         <option value="David">David</option>
         <option value="Erickka">Erickka</option>
@@ -843,6 +844,7 @@
         <select class="field-select field-input" id="f-owner">
           <option value="">— Unassigned —</option>
           <option value="Adam">Adam</option>
+          <option value="Alaina">Alaina</option>
           <option value="Drew">Drew</option>
           <option value="David">David</option>
           <option value="Erickka">Erickka</option>
@@ -1626,7 +1628,7 @@ function initials(name) {
 }
 
 function userColor(name) {
-  const members = ['Adam','Drew','David','Erickka','Gene','George','Lulu','Kourk','Monica','Ashleigh','Ellada','Mike','Ray'];
+  const members = ['Adam','Alaina','Drew','David','Erickka','Gene','George','Lulu','Kourk','Monica','Ashleigh','Ellada','Mike','Ray'];
   const idx = members.indexOf(name);
   return AV_PALETTE_LOGIN[(idx >= 0 ? idx : 0) % AV_PALETTE_LOGIN.length];
 }
