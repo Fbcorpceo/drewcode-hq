@@ -978,6 +978,12 @@ function formatSbError(prefix, error) {
          (error.code ? '\nCode: ' + error.code : '');
 }
 
+// ── Google Chat notifications via Supabase RPC ──
+function notifyGChat(message) {
+  sb.rpc('notify_gchat', { message }).catch(e => console.warn('GChat notify failed:', e));
+}
+const COL_LABELS = { todo: 'Not Done', doing: 'Doing', done: 'Done' };
+
 async function dbInsert(data) {
   const { data: row, error } = await sb.from('tasks').insert([{
     col: data.col, title: data.title, description: data.desc, owner: data.owner,
@@ -1087,6 +1093,7 @@ async function postComment() {
     comments.push(row);
     renderComments();
   }
+  notifyGChat('💬 *' + currentUser + '* posted in Team Chat:\n' + body);
 }
 
 async function deleteComment(id) {
@@ -1327,6 +1334,7 @@ document.querySelectorAll('.cards-area').forEach(area => {
     }
 
     colTasks.splice(insertIdx, 0, t);
+    const oldCol = t.col;
     t.col = newCol;
     const updates = colTasks.map((x, i) => { x.sort_order = i * 10; return { id: x.id, sort_order: x.sort_order }; });
     renderAll();
@@ -1334,6 +1342,7 @@ document.querySelectorAll('.cards-area').forEach(area => {
       dbUpdateCol(t.id, newCol),
       dbUpdateOrder(updates),
     ]);
+    if (oldCol !== newCol) notifyGChat('📌 Task *' + t.title + '* moved to *' + (COL_LABELS[newCol] || newCol) + '*');
   });
 });
 
@@ -1425,6 +1434,7 @@ async function saveTask() {
     if (row) {
       tasks.push(rowToTask(row));
       renderAll();
+      notifyGChat('📋 *' + (data.owner || 'Unassigned') + '* created a new task in *' + (COL_LABELS[data.col] || data.col) + '*:\n' + data.title);
     }
   }
 }
@@ -1587,6 +1597,7 @@ function toggleTheme() {
       t.col = newCol;
       renderAll();
       await dbUpdateCol(t.id, newCol);
+      notifyGChat('📌 Task *' + t.title + '* moved to *' + (COL_LABELS[newCol] || newCol) + '*');
     }
   }, { passive: true });
 
