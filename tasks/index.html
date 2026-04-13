@@ -979,8 +979,9 @@ function formatSbError(prefix, error) {
 }
 
 // ── Google Chat notifications via Supabase RPC ──
-function notifyGChat(message) {
-  sb.rpc('notify_gchat', { message }).catch(e => console.warn('GChat notify failed:', e));
+async function notifyGChat(message) {
+  const { error } = await sb.rpc('notify_gchat', { message });
+  if (error) console.warn('GChat notify failed:', error.message);
 }
 const COL_LABELS = { todo: 'Not Done', doing: 'Doing', done: 'Done' };
 
