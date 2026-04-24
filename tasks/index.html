@@ -1426,7 +1426,6 @@ function renderAll() {
     }
   });
 
-  const visible = tasks.filter(matchesFilter).length;
   const nonArchived = tasks.filter(t => !t.archived);
   const visible = nonArchived.filter(matchesFilter).length;
   const total = nonArchived.length;
