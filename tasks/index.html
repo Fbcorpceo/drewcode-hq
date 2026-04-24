@@ -226,6 +226,43 @@
   .col-doing .col-indicator { background: #7c6dfa; }
   .col-done .col-indicator { background: #34c48b; }
 
+  /* ── Done column archive tabs ── */
+  .done-tabs {
+    display: flex; gap: 4px; padding: 0 14px 10px;
+  }
+  .done-tab {
+    flex: 1; padding: 5px 0; font-size: 11px; font-weight: 500;
+    background: none; border: 1px solid transparent; border-radius: 6px;
+    color: var(--text3); cursor: pointer; font-family: var(--font);
+    transition: all var(--transition); text-align: center;
+  }
+  .done-tab:hover { color: var(--text2); background: var(--bg3); }
+  .done-tab.active {
+    color: var(--text); background: var(--bg3);
+    border-color: var(--border);
+  }
+  .done-tab-badge {
+    font-size: 10px; color: var(--text3);
+    background: var(--bg4); padding: 1px 5px;
+    border-radius: 99px; margin-left: 4px;
+  }
+  .btn-archive-all {
+    width: 100%; padding: 7px;
+    background: none; border: 1px dashed var(--border);
+    border-radius: var(--radius); color: var(--text3);
+    font-size: 11px; font-family: var(--font); cursor: pointer;
+    transition: all var(--transition); margin-top: 4px;
+  }
+  .btn-archive-all:hover { background: var(--bg3); color: var(--accent); border-color: var(--accent); }
+  .card-archive-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 12px; padding: 2px 4px;
+    border-radius: 4px; opacity: 0;
+    transition: opacity 0.15s, color var(--transition), background var(--transition);
+  }
+  .card:hover .card-archive-btn { opacity: 1; }
+  .card-archive-btn:hover { background: var(--bg4); color: #34c48b; }
+
   .cards-area {
     padding: 10px;
     flex: 1;
@@ -824,8 +861,14 @@
       </div>
       <span class="col-count" id="badge-done">0</span>
     </div>
+    <div class="done-tabs">
+      <button class="done-tab active" id="done-tab-active" onclick="switchDoneTab('active')">Active <span class="done-tab-badge" id="done-badge-active">0</span></button>
+      <button class="done-tab" id="done-tab-archived" onclick="switchDoneTab('archived')">Archived <span class="done-tab-badge" id="done-badge-archived">0</span></button>
+    </div>
     <div class="cards-area" id="area-done" data-col="done"></div>
-    <button class="add-btn" onclick="openModal(null,'done')"><span class="plus">+</span> Add task</button>
+    <div id="done-active-footer">
+      <button class="add-btn" onclick="openModal(null,'done')"><span class="plus">+</span> Add task</button>
+    </div>
   </div>
 
   <aside class="comments-panel" id="comments-panel">
@@ -995,7 +1038,7 @@ async function loadTasks() {
       milestone: r.milestone || '',
       priority: r.priority || '',
       color: r.color || COLORS[0],
-      link: r.link || '',
+      link: r.link || '', archived: !!r.archived,
       sort_order: r.sort_order || 0,
     }));
     showLoading(false);
@@ -1091,7 +1134,7 @@ function rowToTask(r) {
     id: r.id, col: r.col, title: r.title, desc: r.description || '',
     owner: r.owner || '', due: r.due || '', milestone: r.milestone || '',
     priority: r.priority || '', color: r.color || COLORS[0],
-    link: r.link || '',
+    link: r.link || '', archived: !!r.archived,
     sort_order: r.sort_order || 0,
   };
 }
@@ -1291,9 +1334,24 @@ function matchesFilter(t) {
 }
 
 function renderAll() {
+  // Update Done tab badges
+  const doneAll = tasks.filter(t => t.col === 'done');
+  const doneActive = doneAll.filter(t => !t.archived);
+  const doneArchived = doneAll.filter(t => t.archived);
+  document.getElementById('done-badge-active').textContent = doneActive.length;
+  document.getElementById('done-badge-archived').textContent = doneArchived.length;
+
   ['todo','doing','done'].forEach(col => {
     const area = document.getElementById('area-' + col);
-    const colTasks = tasks.filter(t => t.col === col).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    let colTasks = tasks.filter(t => t.col === col).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+    // For Done column, filter by active/archived tab
+    if (col === 'done') {
+      colTasks = colTasks.filter(t => doneTab === 'archived' ? t.archived : !t.archived);
+    } else {
+      colTasks = colTasks.filter(t => !t.archived);
+    }
+
     const visibleCount = colTasks.filter(matchesFilter).length;
     document.getElementById('badge-' + col).textContent = visibleCount + '/' + colTasks.length;
     area.innerHTML = '';
@@ -1301,7 +1359,7 @@ function renderAll() {
     if (colTasks.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'empty-state';
-      empty.textContent = 'No tasks yet';
+      empty.textContent = col === 'done' && doneTab === 'archived' ? 'No archived tasks' : 'No tasks yet';
       area.appendChild(empty);
     } else {
       colTasks.forEach(t => {
@@ -1310,16 +1368,26 @@ function renderAll() {
         const pm = t.priority ? PRIORITY_META[t.priority] : null;
         const avBg = ownerColor(t.owner);
         const piCls = t.priority ? 'pi-' + t.priority : 'pi-none';
+        const isArchived = !!t.archived;
 
         const card = document.createElement('div');
         card.className = 'card ' + piCls + (visible ? '' : ' hidden');
-        card.draggable = true;
+        card.draggable = !isArchived;
         card.dataset.id = t.id;
         card.style.borderLeftColor = t.color || '#3a3a44';
+
+        const archiveBtn = col === 'done' && !isArchived
+          ? `<button class="card-archive-btn" title="Archive" onclick="event.stopPropagation();archiveTask('${t.id}')">✓</button>`
+          : '';
+        const restoreBtn = isArchived
+          ? `<button class="card-archive-btn" title="Restore" onclick="event.stopPropagation();unarchiveTask('${t.id}')" style="opacity:1;color:var(--text3)">↩</button>`
+          : '';
 
         card.innerHTML = `
           <div class="card-top">
             <div class="card-title">${escHtml(t.title)}</div>
+            ${restoreBtn}
+            ${archiveBtn}
             <button class="edit-btn" onclick="openModal('${t.id}','${col}')">✎</button>
           </div>
           ${t.desc ? `<div class="card-desc">${escHtml(t.desc)}</div>` : ''}
@@ -1331,28 +1399,86 @@ function renderAll() {
             ${t.link ? `<a class="chip link-chip" href="${escHtml(t.link)}" target="_blank" rel="noopener noreferrer" title="${escHtml(t.link)}" onclick="event.stopPropagation()" draggable="false">🔗 <span class="link-text">${escHtml(linkLabel(t.link))}</span></a>` : ''}
           </div>`;
 
-        card.addEventListener('dragstart', e => {
-          dragId = t.id;
-          card.classList.add('dragging');
-          e.dataTransfer.effectAllowed = 'move';
-        });
-        card.addEventListener('dragend', () => {
-          dragId = null;
-          card.classList.remove('dragging');
-          document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
-        });
-
+        if (!isArchived) {
+          card.addEventListener('dragstart', e => {
+            dragId = t.id;
+            card.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+          });
+          card.addEventListener('dragend', () => {
+            dragId = null;
+            card.classList.remove('dragging');
+            document.querySelectorAll('.cards-area').forEach(a => a.classList.remove('drag-over'));
+          });
+        }
 
         area.appendChild(card);
       });
+
+      // "Archive All" button at the bottom of active done tasks
+      if (col === 'done' && doneTab === 'active' && colTasks.length > 0) {
+        const archAllBtn = document.createElement('button');
+        archAllBtn.className = 'btn-archive-all';
+        archAllBtn.textContent = 'Archive all ' + colTasks.length + ' done';
+        archAllBtn.onclick = archiveAllDone;
+        area.appendChild(archAllBtn);
+      }
     }
   });
 
   const visible = tasks.filter(matchesFilter).length;
-  const total = tasks.length;
+  const nonArchived = tasks.filter(t => !t.archived);
+  const visible = nonArchived.filter(matchesFilter).length;
+  const total = nonArchived.length;
   document.getElementById('task-total').textContent = visible === total
     ? total + ' task' + (total !== 1 ? 's' : '')
     : visible + ' of ' + total + ' tasks';
+}
+
+// ── Done column archive ──
+let doneTab = 'active';
+
+function switchDoneTab(tab) {
+  doneTab = tab;
+  document.getElementById('done-tab-active').classList.toggle('active', tab === 'active');
+  document.getElementById('done-tab-archived').classList.toggle('active', tab === 'archived');
+  document.getElementById('done-active-footer').style.display = tab === 'active' ? '' : 'none';
+  renderAll();
+}
+
+async function archiveTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  t.archived = true;
+  renderAll();
+  const { error } = await sb.from('tasks').update({ archived: true }).eq('id', id);
+  if (error) {
+    console.error('Archive error:', error);
+    showLoadError(formatSbError('Supabase archive error', error));
+  }
+}
+
+async function unarchiveTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  t.archived = false;
+  renderAll();
+  const { error } = await sb.from('tasks').update({ archived: false }).eq('id', id);
+  if (error) {
+    console.error('Unarchive error:', error);
+    showLoadError(formatSbError('Supabase unarchive error', error));
+  }
+}
+
+async function archiveAllDone() {
+  const doneTasks = tasks.filter(t => t.col === 'done' && !t.archived);
+  if (doneTasks.length === 0) return;
+  if (!confirm('Archive all ' + doneTasks.length + ' done task' + (doneTasks.length > 1 ? 's' : '') + '?')) return;
+  doneTasks.forEach(t => t.archived = true);
+  renderAll();
+  await Promise.all(doneTasks.map(t =>
+    sb.from('tasks').update({ archived: true }).eq('id', t.id)
+  ));
 }
 
 function escHtml(s) {
