@@ -1,29 +1,19 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "dave.html", "use": "@vercel/static" },
-    { "src": "tasks/index.html", "use": "@vercel/static" },
-    { "src": "projects/index.html", "use": "@vercel/static" },
-    { "src": "fbcorp-landing/index.html", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/dave", "dest": "/dave.html" },
-    { "src": "/dave.html", "dest": "/dave.html" },
-    { "src": "/tasks", "dest": "/tasks/index.html" },
-    { "src": "/tasks/(.*)", "dest": "/tasks/index.html" },
-    { "src": "/projects", "dest": "/projects/index.html" },
-    { "src": "/projects/(.*)", "dest": "/projects/index.html" },
+  "rewrites": [
+    { "source": "/dave", "destination": "/dave.html" },
+    { "source": "/tasks", "destination": "/tasks/index.html" },
+    { "source": "/tasks/:path*", "destination": "/tasks/index.html" },
+    { "source": "/projects", "destination": "/projects/index.html" },
+    { "source": "/projects/:path*", "destination": "/projects/index.html" },
     {
-      "src": "/",
+      "source": "/",
       "has": [{ "type": "host", "value": "fbcorp.ai" }],
-      "dest": "/fbcorp-landing/index.html"
+      "destination": "/fbcorp-landing/index.html"
     },
     {
-      "src": "/((?!tasks|dave|projects|_next|favicon|api).*)",
+      "source": "/:path*",
       "has": [{ "type": "host", "value": "fbcorp.ai" }],
-      "dest": "/fbcorp-landing/index.html"
-    },
-    { "src": "/(.*)", "dest": "/index.html" }
+      "destination": "/fbcorp-landing/index.html"
+    }
   ]
 }
