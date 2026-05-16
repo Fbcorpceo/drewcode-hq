@@ -17,3 +17,9 @@
     }
   ]
 }
+{
+  "rewrites": [
+    { "source": "/estimating", "destination": "https://estimating.drewcodehq.com" },
+    { "source": "/estimating/:path*", "destination": "https://estimating.drewcodehq.com/:path*" }
+  ]
+}
