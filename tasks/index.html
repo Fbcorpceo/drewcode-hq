@@ -1129,7 +1129,7 @@ function formatSbError(prefix, error) {
 
 // ── Google Chat notifications via Supabase RPC ──
 function notifyGChat(message) {
-  fetch('https://script.google.com/macros/s/AKfycbzY4jODTJ15phfcivkHbVjspjyLSvZ4VO_h92sRW3_8E1iSwDb-5HKDs0FF-5Op1sks/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwCiNcS5PhqlxDPGndXMAxgZxXj2PSubISOZIpO1Fmuo2G3KdonYzj4dEl1WiAOSz8B/exec', {
     method: 'POST',
     body: JSON.stringify({ message }),
   }).catch(e => console.warn('GChat notify failed:', e));
