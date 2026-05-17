@@ -5,6 +5,8 @@
     { "source": "/tasks/:path*", "destination": "/tasks/index.html" },
     { "source": "/projects", "destination": "/projects/index.html" },
     { "source": "/projects/:path*", "destination": "/projects/index.html" },
+    { "source": "/estimating", "destination": "https://estimating.drewcodehq.com" },
+    { "source": "/estimating/:path*", "destination": "https://estimating.drewcodehq.com/:path*" },
     {
       "source": "/",
       "has": [{ "type": "host", "value": "fbcorp.ai" }],
@@ -15,11 +17,5 @@
       "has": [{ "type": "host", "value": "fbcorp.ai" }],
       "destination": "/fbcorp-landing/index.html"
     }
-  ]
-}
-{
-  "rewrites": [
-    { "source": "/estimating", "destination": "https://estimating.drewcodehq.com" },
-    { "source": "/estimating/:path*", "destination": "https://estimating.drewcodehq.com/:path*" }
   ]
 }
