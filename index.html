@@ -9,24 +9,31 @@ fetch('/fbcorp-landing/').then(function(r){return r.text()}).then(function(h){do
 </script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<script>if(location.hostname.includes('fbcorp.ai')){fetch('/fbcorp-landing/').then(r=>r.text()).then(h=>{document.open();document.write(h);document.close();});document.write('<body style="background:#000"></body>');}</script>
-<title>DrewCode HQ — The Podcast</title>
+<title>FBCorp — Building a Foundation for the Future</title>
 <meta name="robots" content="index, follow"/>
-<meta property="og:title" content="DrewCode HQ — The Podcast"/>
-<meta property="og:description" content="The construction industry's boldest podcast. Business | Growth | Strategy. Hosted by Andrew Robles."/>
-<meta property="og:image" content="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/DrewCodeHQ_Logo.png"/>
-<meta property="og:image:secure_url" content="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/DrewCodeHQ_Logo.png"/>
-<meta property="og:image:width" content="2000"/>
-<meta property="og:image:height" content="2000"/>
+<meta property="og:title" content="FBCorp — Building a Foundation for the Future"/>
+<meta property="og:description" content="Construction. Innovation. Excellence."/>
+<meta property="og:image" content="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/fbcorp-og.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
 <meta property="og:image:type" content="image/png"/>
-<meta property="og:url" content="https://drewcodehq.com"/>
+<meta property="og:url" content="https://fbcorp.ai"/>
 <meta property="og:type" content="website"/>
-<meta property="og:site_name" content="DrewCode HQ"/>
+<meta property="og:site_name" content="FBCorp"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="DrewCode HQ — The Podcast"/>
-<meta name="twitter:description" content="The construction industry's boldest podcast. Business | Growth | Strategy. Hosted by Andrew Robles."/>
-<meta name="twitter:image" content="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/DrewCodeHQ_Logo.png"/>
-<meta name="twitter:image:alt" content="DrewCode HQ Logo"/>
+<meta name="twitter:title" content="FBCorp — Building a Foundation for the Future"/>
+<meta name="twitter:description" content="Construction. Innovation. Excellence."/>
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/fbcorp-og.png"/>
+<script>
+if(!location.hostname.includes('fbcorp.ai')){
+document.title='DrewCode HQ — The Podcast';
+document.querySelector('meta[property="og:title"]').content='DrewCode HQ — The Podcast';
+document.querySelector('meta[property="og:description"]').content='The construction industry\'s boldest podcast. Business | Growth | Strategy.';
+document.querySelector('meta[property="og:image"]').content='https://raw.githubusercontent.com/Fbcorpceo/drewcode-hq/main/DrewCodeHQ_Logo.png';
+document.querySelector('meta[property="og:url"]').content='https://drewcodehq.com';
+document.querySelector('meta[property="og:site_name"]').content='DrewCode HQ';
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
